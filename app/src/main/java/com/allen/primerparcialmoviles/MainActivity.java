@@ -1,29 +1,25 @@
 package com.allen.primerparcialmoviles;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
-import com.allen.primerparcialmoviles.Adapter.PhoneAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends RuntimePermission {
     private static final int REQUEST_PERMISSION = 10;
@@ -58,15 +54,56 @@ public class MainActivity extends RuntimePermission {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        mTextMessage = (TextView) findViewById(R.id.message);
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        if (savedInstanceState == null) {
+            requestAppPermissions(new String[]{
+                            Manifest.permission.READ_CONTACTS,
+                    },
+                    R.string.msg, REQUEST_PERMISSION);
+        } else {
+            restorePreviousState(savedInstanceState); // Restore data found in the Bundle
+        }
 
-        requestAppPermissions(new String[]{
-                        Manifest.permission.READ_CONTACTS,
-                },
-                R.string.msg, REQUEST_PERMISSION);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+
+        Parcelable listState = rv.getLayoutManager().onSaveInstanceState();
+        // putting recyclerview position
+        savedInstanceState.putParcelable("RV", listState);
+        // putting recyclerview items
+        savedInstanceState.putSerializable("contact_list", contactlist);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+
+    public void restorePreviousState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+        LinearLayoutManager.SavedState mListState = savedInstanceState.getParcelable("RV");
+        // getting recyclerview items
+        contactlist = (ArrayList<Contact>) savedInstanceState.getSerializable("contact_list");
+        // Restoring adapter items
+        ca = new ContactAdapter(contactlist) {
+            @Override
+            public void infoOnClickListener(Contact c) {
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                Intent intent = new Intent(getBaseContext(), ContactInfo.class);
+                intent.putExtra("Contact", c);
+                startActivity(intent);
+            }
+        };
+        rv = findViewById(R.id.list_container);
+        rv.setAdapter(ca);
+        rv.setLayoutManager(new GridLayoutManager(this,3));
+        // Restoring recycler view position
+        rv.getLayoutManager().onRestoreInstanceState(mListState);
     }
 
     @Override
@@ -78,21 +115,11 @@ public class MainActivity extends RuntimePermission {
         ca = new ContactAdapter(contactlist) {
             @Override
             public void infoOnClickListener(Contact c) {
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 Intent intent = new Intent(getBaseContext(), ContactInfo.class);
                 intent.putExtra("Contact", c);
                 startActivity(intent);
-//                AlertDialog.Builder mBuild = new AlertDialog.Builder(MainActivity.this);
-//                View v2 = getLayoutInflater().inflate(R.layout.contact_info_dialog, null);
-//                RecyclerView rv = v2.findViewById(R.id.phones_recycler);
-//                LinearLayoutManager lm = new LinearLayoutManager(getBaseContext());
-//                rv.setLayoutManager(lm);
-//                rv.setAdapter(new PhoneAdapter(getBaseContext(),contactlist.get(vh.getAdapterPosition()).getNumber()));
-//                mBuild.setView(v2);
-//                AlertDialog dialog = mBuild.create();
-//                dialog.show();
             }
-
-
         };
         gl = new GridLayoutManager(this, 3);
         rv.setLayoutManager(gl);
@@ -101,7 +128,7 @@ public class MainActivity extends RuntimePermission {
 
     public ArrayList<Contact> findContacts() {
         String name;
-        ArrayList<String> emails,numbers,addresses;
+        ArrayList<String> emails, numbers, addresses;
         ArrayList<Contact> contactlist = new ArrayList<>();
         Uri image;
         String id;
@@ -119,10 +146,6 @@ public class MainActivity extends RuntimePermission {
 
             id = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
             String nav = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO_URI));
-            if (nav != null) {
-                image = Uri.parse(nav);
-            } else image = null;
-
 
             numbers = getPhoneNumbers(id);
 
@@ -132,7 +155,7 @@ public class MainActivity extends RuntimePermission {
 
             //Si la columna starred tiene 1 es que el contacto del telefono es favorito
             boolean fav = (phones.getString(phones.getColumnIndex(ContactsContract.Data.STARRED))).equals("1");
-            contactlist.add(new Contact(id,name, numbers,emails, image, fav));
+            contactlist.add(new Contact(id, name, numbers, emails, nav, fav));
 
             //Log.d("TAM", "findContacts: "+ contactlist.size());
         }
@@ -140,7 +163,7 @@ public class MainActivity extends RuntimePermission {
         return contactlist;
     }
 
-    public ArrayList<String> getEmails(String id){
+    public ArrayList<String> getEmails(String id) {
         ArrayList<String> emails = new ArrayList<>();
         Cursor cur1 = getContentResolver().query(
                 ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
@@ -158,7 +181,7 @@ public class MainActivity extends RuntimePermission {
         return emails;
     }
 
-    public ArrayList<String> getPhoneNumbers(String id){
+    public ArrayList<String> getPhoneNumbers(String id) {
         ArrayList<String> numbers = new ArrayList<>();
         Cursor pCur = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
         while (pCur.moveToNext()) {
@@ -167,32 +190,29 @@ public class MainActivity extends RuntimePermission {
             //Log.d("NUMBER_SIZE_INTERNO", "findContacts: " + numbers.size());
             break;
         }
-        Log.d("NUMBER_SIZE", "findContacts: " + numbers.size());
+        //Log.d("NUMBER_SIZE", "findContacts: " + numbers.size());
         pCur.close();
         return numbers;
     }
 
 
-
-    public ArrayList<String> getAddress(String id){
-        Uri postal_uri =ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
-        Cursor postal_cursor  = getContentResolver().query(postal_uri,null,  ContactsContract.Data.CONTACT_ID + "="+id, null,null);
+    public ArrayList<String> getAddress(String id) {
+        Uri postal_uri = ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
+        Cursor postal_cursor = getContentResolver().query(postal_uri, null, ContactsContract.Data.CONTACT_ID + "=" + id, null, null);
         ArrayList<String> addresses = new ArrayList<>();
-        while(postal_cursor.moveToNext())
-        {
+        while (postal_cursor.moveToNext()) {
             String address = "";
             String street = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
             String city = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
             String country = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY));
-            address = street+","+city+','+country;
+            address = street + "," + city + ',' + country;
             addresses.add(address);
 
         }
         postal_cursor.close();
-        Log.d("getAddress: ",addresses.size()+"" );
+        //Log.d("getAddress: ", addresses.size() + "");
         return addresses;
     }
-
 
 
 }

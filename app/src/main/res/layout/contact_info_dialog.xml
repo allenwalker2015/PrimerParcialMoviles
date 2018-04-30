@@ -15,10 +15,10 @@
         <ImageView
             android:id="@+id/picture_imageview"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_favortite_black"
+            android:src="@drawable/ic_person_black"
              />
 
         <TextView
@@ -27,13 +27,19 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:text="Lorem ipsum dolor sit amet. " />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/darker_gray" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/phones_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
         </android.support.v7.widget.RecyclerView>
 

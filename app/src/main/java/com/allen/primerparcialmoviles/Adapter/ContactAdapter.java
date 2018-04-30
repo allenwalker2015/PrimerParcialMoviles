@@ -39,21 +39,18 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         holder.name.setText(list.get(position).getName());
         holder.info.setImageResource(android.R.drawable.ic_menu_info_details);
         holder.c = list.get(position);
-        Uri image = list.get(position).getPicture();
-        imageSelect(holder, image, position);
-        listeners(holder, image, position);
+        if(list.get(position).getPicture()!=null) {
+            holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));
+        }else  holder.picture.setImageResource(R.drawable.ic_person_black);
+        imageSelect(holder, position);
+        listeners(holder, position);
 
     }
 
-    public void imageSelect(ContactAdapter.ViewHolder holder, Uri image, final int position) {
+    public void imageSelect(ContactAdapter.ViewHolder holder, final int position) {
         final ImageButton star = holder.star;
         //Si el contacto tiene imagen, se coloca en la tarjeta, sino se coloca la imagen por default
-        if (image != null) {
-            holder.picture.setImageURI(image);
-            //holder.picture.set
-        } else {
-            holder.picture.setImageResource(R.drawable.ic_person_black);
-        }
+
         //Colocar la estrella encendida o apagada segun corresponda
         if (list.get(position).isFavorite()) {
 
@@ -65,7 +62,7 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
 
     }
 
-    public void listeners(final ContactAdapter.ViewHolder holder, Uri image, final int position) {
+    public void listeners(final ContactAdapter.ViewHolder holder, final int position) {
         final ImageButton star = holder.star;
         holder.star.setOnClickListener(new View.OnClickListener() {
             @Override

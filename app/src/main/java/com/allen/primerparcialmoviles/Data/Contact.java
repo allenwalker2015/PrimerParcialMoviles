@@ -1,19 +1,19 @@
 package com.allen.primerparcialmoviles.Data;
 
-import android.net.Uri;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class Contact implements Serializable{
     private String id;
     private String name;
     private ArrayList<String> number,emails;
-    private Uri picture;
+    private String picture;
     private boolean favorite;
 
-    public Contact(String id,String name, ArrayList<String> number,ArrayList<String> emails, Uri picture, boolean favorite) {
+    public Contact(String id,String name, ArrayList<String> number,ArrayList<String> emails, String picture, boolean favorite) {
         this.name = name;
         this.number = number;
         this.picture = picture;
@@ -38,11 +38,11 @@ public class Contact implements Serializable{
         this.number = number;
     }
 
-    public Uri getPicture() {
+    public String getPicture() {
         return picture;
     }
 
-    public void setPicture(Uri picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 
@@ -60,5 +60,13 @@ public class Contact implements Serializable{
 
     public void setEmails(ArrayList<String> emails) {
         this.emails = emails;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
