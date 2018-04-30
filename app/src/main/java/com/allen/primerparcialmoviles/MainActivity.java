@@ -2,18 +2,18 @@ package com.allen.primerparcialmoviles;
 
 import android.Manifest;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
+
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.provider.ContactsContract;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.MenuItem;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
@@ -26,37 +26,15 @@ public class MainActivity extends RuntimePermission {
     RecyclerView rv;
     GridLayoutManager gl;
     ContactAdapter ca;
+    SearchView sv;
+    ContactsProvider cp;
     private ArrayList<Contact> contactlist;
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.title_home);
-                    Toast.makeText(getBaseContext(), "CLICK EN EL HOME", Toast.LENGTH_SHORT).show();
-
-                    return true;
-
-                case R.id.navigation_favorites:
-//                    mTextMessage.setText(R.string.title_favorites);
-                    Toast.makeText(getBaseContext(), "CLICK EN EL FAVS", Toast.LENGTH_SHORT).show();
-
-                    return true;
-            }
-            return false;
-        }
-    };
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (savedInstanceState == null) {
             requestAppPermissions(new String[]{
@@ -66,18 +44,16 @@ public class MainActivity extends RuntimePermission {
         } else {
             restorePreviousState(savedInstanceState); // Restore data found in the Bundle
         }
-
     }
 
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
-
         Parcelable listState = rv.getLayoutManager().onSaveInstanceState();
-        // putting recyclerview position
+        // Se guarda el estado de la lista
         savedInstanceState.putParcelable("RV", listState);
-        // putting recyclerview items
+        // Se guardan los items
         savedInstanceState.putSerializable("contact_list", contactlist);
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -87,18 +63,34 @@ public class MainActivity extends RuntimePermission {
 
         super.onRestoreInstanceState(savedInstanceState);
         LinearLayoutManager.SavedState mListState = savedInstanceState.getParcelable("RV");
-        // getting recyclerview items
+        // Se obtienen los items de la lista
         contactlist = (ArrayList<Contact>) savedInstanceState.getSerializable("contact_list");
+        BottomNavigationView navigation =  findViewById(R.id.navigation);
         // Restoring adapter items
-        ca = new ContactAdapter(contactlist) {
-            @Override
-            public void infoOnClickListener(Contact c) {
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                Intent intent = new Intent(getBaseContext(), ContactInfo.class);
-                intent.putExtra("Contact", c);
-                startActivity(intent);
-            }
-        };
+        if(navigation.getSelectedItemId() == R.id.navigation_favorites){
+            ca = new ContactAdapter(getFavs()) {
+                @Override
+                public void infoOnClickListener(Contact c) {
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    Intent intent = new Intent(getBaseContext(), ContactInfo.class);
+                    intent.putExtra("Contact", c);
+                    startActivity(intent);
+                }
+            };
+        }
+        else {
+            ca = new ContactAdapter(contactlist) {
+                @Override
+                public void infoOnClickListener(Contact c) {
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    Intent intent = new Intent(getBaseContext(), ContactInfo.class);
+                    intent.putExtra("Contact", c);
+                    startActivity(intent);
+                }
+            };
+        }
+        confSearch();
+        confNavigator(navigation);
         rv = findViewById(R.id.list_container);
         rv.setAdapter(ca);
         rv.setLayoutManager(new GridLayoutManager(this,3));
@@ -110,8 +102,10 @@ public class MainActivity extends RuntimePermission {
     public void onPermissionsGranted(int requestCode) {
         //Do anything when permisson granted
         Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
-        contactlist = findContacts();
+        cp = new ContactsProvider(this);
+        contactlist = cp.findContacts();
         rv = findViewById(R.id.list_container);
+        BottomNavigationView navigation =  findViewById(R.id.navigation);
         ca = new ContactAdapter(contactlist) {
             @Override
             public void infoOnClickListener(Contact c) {
@@ -121,97 +115,67 @@ public class MainActivity extends RuntimePermission {
                 startActivity(intent);
             }
         };
+
         gl = new GridLayoutManager(this, 3);
         rv.setLayoutManager(gl);
         rv.setAdapter(ca);
+        confNavigator(navigation);
+        confSearch();
+
+
     }
 
-    public ArrayList<Contact> findContacts() {
-        String name;
-        ArrayList<String> emails, numbers, addresses;
-        ArrayList<Contact> contactlist = new ArrayList<>();
-        Uri image;
-        String id;
+    public void confNavigator(BottomNavigationView navigation ){
 
-        // CURSOR PARAMS
+        mOnNavigationItemSelectedListener
+                = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        String sort = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        //SET CURSOR
-        Cursor phones = getContentResolver().query(uri, null, null, null, sort);
-        //MOVING
-        while (phones.moveToNext()) {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
+                        ca.list = contactlist;
+                        ca.notifyDataSetChanged();
 
-            name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-            id = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-            String nav = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO_URI));
+                        Toast.makeText(getBaseContext(), "CLICK EN EL HOME", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.navigation_favorites:
 
-            numbers = getPhoneNumbers(id);
-
-            emails = getEmails(id);
-
-            addresses = getAddress(id);
-
-            //Si la columna starred tiene 1 es que el contacto del telefono es favorito
-            boolean fav = (phones.getString(phones.getColumnIndex(ContactsContract.Data.STARRED))).equals("1");
-            contactlist.add(new Contact(id, name, numbers, emails, nav, fav));
-
-            //Log.d("TAM", "findContacts: "+ contactlist.size());
-        }
-        phones.close();
-        return contactlist;
+                        ca.list = getFavs();
+                        ca.notifyDataSetChanged();
+                        Toast.makeText(getBaseContext(), "CLICK EN EL FAVS", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+                return false;
+            }
+        };
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+    public void confSearch(){
+        sv = findViewById(R.id.prim_search_bar);
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-    public ArrayList<String> getEmails(String id) {
-        ArrayList<String> emails = new ArrayList<>();
-        Cursor cur1 = getContentResolver().query(
-                ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                new String[]{id}, null);
-        while (cur1.moveToNext()) {
-            //to get the contact names
-            // String email2 = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME));
-            String email = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-
-            emails.add(email);
-        }
-        // Log.d( "emails-size: " , emails.size() + "");
-        cur1.close();
-        return emails;
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //FILTER AS YOU TYPE
+                ca.getFilter().filter(query);
+                return false;
+            }
+        });
     }
-
-    public ArrayList<String> getPhoneNumbers(String id) {
-        ArrayList<String> numbers = new ArrayList<>();
-        Cursor pCur = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-        while (pCur.moveToNext()) {
-            String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            numbers.add(contactNumber);
-            //Log.d("NUMBER_SIZE_INTERNO", "findContacts: " + numbers.size());
-            break;
+    public ArrayList<Contact> getFavs(){
+        ArrayList<Contact> favs= new ArrayList<>();
+        for(Contact contact:contactlist){
+            if(contact.isFavorite()){
+                favs.add(contact);
+            }
         }
-        //Log.d("NUMBER_SIZE", "findContacts: " + numbers.size());
-        pCur.close();
-        return numbers;
-    }
-
-
-    public ArrayList<String> getAddress(String id) {
-        Uri postal_uri = ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
-        Cursor postal_cursor = getContentResolver().query(postal_uri, null, ContactsContract.Data.CONTACT_ID + "=" + id, null, null);
-        ArrayList<String> addresses = new ArrayList<>();
-        while (postal_cursor.moveToNext()) {
-            String address = "";
-            String street = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
-            String city = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
-            String country = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY));
-            address = street + "," + city + ',' + country;
-            addresses.add(address);
-
-        }
-        postal_cursor.close();
-        //Log.d("getAddress: ", addresses.size() + "");
-        return addresses;
+        return favs;
     }
 
 

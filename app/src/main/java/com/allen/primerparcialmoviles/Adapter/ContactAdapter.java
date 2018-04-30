@@ -6,23 +6,31 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.allen.primerparcialmoviles.Data.Contact;
+import com.allen.primerparcialmoviles.Filter.ContactFilter;
 import com.allen.primerparcialmoviles.R;
 
 import java.util.ArrayList;
 
-public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
+public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> implements Filterable {
 
-    private ArrayList<Contact> list;
+    public ArrayList<Contact> list,filterList;
+    public ContactFilter filter;
     private View v;
+    private Boolean favs=false;
+
+
 
     public ContactAdapter(ArrayList<Contact> list) {
         this.list = list;
+        this.filterList = list;
     }
 
     @NonNull
@@ -114,5 +122,27 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
             info = itemView.findViewById(R.id.button_info);
         }
 
+
+
     }
+
+    @Override
+    public Filter getFilter() {
+        if(filter==null)
+        {
+            filter=new ContactFilter(list,this,favs);
+        }
+
+        return filter;
+    }
+
+    public Boolean getFavs() {
+        return favs;
+    }
+
+    public void setFavs(Boolean favs) {
+        this.favs = favs;
+    }
+
+
 }
