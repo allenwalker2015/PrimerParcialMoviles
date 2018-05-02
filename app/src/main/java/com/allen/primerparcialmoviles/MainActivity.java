@@ -17,6 +17,7 @@ import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
+import com.allen.primerparcialmoviles.ContentProviders.ContactsProvider;
 import com.allen.primerparcialmoviles.Data.Contact;
 
 import java.util.ArrayList;

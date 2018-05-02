@@ -4,22 +4,27 @@ package com.allen.primerparcialmoviles.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Contact implements Serializable{
     private String id;
     private String name;
-    private ArrayList<String> number,emails;
+    private ArrayList<String> number,emails,address;
     private String picture;
     private boolean favorite;
+    private Date birth;
 
-    public Contact(String id,String name, ArrayList<String> number,ArrayList<String> emails, String picture, boolean favorite) {
+
+    public Contact(String id, String name, ArrayList<String> number, ArrayList<String> emails, ArrayList<String> address, String picture, boolean favorite, Date birth) {
         this.name = name;
         this.number = number;
+        this.address = address;
         this.picture = picture;
         this.favorite = favorite;
         this.emails = emails;
         this.id = id;
+        this.birth = birth;
     }
 
     public String getName() {
@@ -68,5 +73,21 @@ public class Contact implements Serializable{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Date getBirth() {
+        return birth;
+    }
+
+    public void setBirth(Date birth) {
+        this.birth = birth;
+    }
+
+    public ArrayList<String> getAddress() {
+        return address;
+    }
+
+    public void setAddress(ArrayList<String> address) {
+        this.address = address;
     }
 }
