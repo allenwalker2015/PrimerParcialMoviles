@@ -5,18 +5,21 @@ package com.allen.primerparcialmoviles.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 
 public class Contact implements Serializable{
     private String id;
     private String name;
-    private ArrayList<String> number,emails,address;
+    private ArrayList<String> emails,address;
+    private LinkedHashMap<String,String> number;
     private String picture;
     private boolean favorite;
     private Date birth;
 
 
-    public Contact(String id, String name, ArrayList<String> number, ArrayList<String> emails, ArrayList<String> address, String picture, boolean favorite, Date birth) {
+    public Contact(String id, String name, LinkedHashMap<String,String> number, ArrayList<String> emails, ArrayList<String> address, String picture, boolean favorite, Date birth) {
         this.name = name;
         this.number = number;
         this.address = address;
@@ -35,11 +38,11 @@ public class Contact implements Serializable{
         this.name = name;
     }
 
-    public ArrayList<String> getNumber() {
+    public LinkedHashMap<String,String> getNumber() {
         return number;
     }
 
-    public void setNumber(ArrayList<String> number) {
+    public void setNumber(LinkedHashMap<String,String> number) {
         this.number = number;
     }
 

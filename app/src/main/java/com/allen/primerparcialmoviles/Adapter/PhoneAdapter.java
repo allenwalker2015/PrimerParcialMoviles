@@ -15,13 +15,14 @@ import android.widget.TextView;
 import com.allen.primerparcialmoviles.R;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder>{
     View v;
     ViewHolder vh;
-    ArrayList<String> list;
+    LinkedHashMap<String,String> list;
     Context context;
-    public PhoneAdapter(Context context, ArrayList<String> list){
+    public PhoneAdapter(Context context, LinkedHashMap<String,String> list){
         this.context = context;
         this.list = list;
     }
@@ -36,11 +37,14 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull PhoneAdapter.ViewHolder holder,final int position) {
-        holder.number.setText(list.get(position));
+        final String value = (new ArrayList<String>(list.values())).get(position);
+        final String type = (new ArrayList<String>(list.keySet())).get(position);
+        holder.number.setText(value);
+        holder.type.setText(type);
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", list.get(position), null));
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", value, null));
                 context.startActivity(intent);
             }
         });
@@ -52,10 +56,11 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder>{
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView number;
+        TextView number,type;
         ImageButton call,sms;
         public ViewHolder(View itemView) {
             super(itemView);
+            type = itemView.findViewById(R.id.phone_type);
             number = itemView.findViewById(R.id.phone_number);
             call = itemView.findViewById(R.id.button_call);
             sms = itemView.findViewById(R.id.button_sms);

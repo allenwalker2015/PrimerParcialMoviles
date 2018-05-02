@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 public class ContactsProvider {
     private AppCompatActivity activity;
@@ -22,7 +23,8 @@ public class ContactsProvider {
 
     public ArrayList<Contact> findContacts() {
         String name;
-        ArrayList<String> emails, numbers, addresses,birthday;
+        ArrayList<String> emails, addresses,birthday;
+        LinkedHashMap<String,String> numbers;
         ArrayList<Contact> contactlist = new ArrayList<>();
         Uri image;
         String id;
@@ -77,15 +79,15 @@ public class ContactsProvider {
         return emails;
     }
 
-    public ArrayList<String> getPhoneNumbers(String id) {
-        ArrayList<String> numbers = new ArrayList<>();
+    public LinkedHashMap<String,String> getPhoneNumbers(String id) {
+        LinkedHashMap<String,String> numbers = new LinkedHashMap<>();
         Cursor pCur = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[] { id }, null);
         while (pCur.moveToNext()) {
             int type = pCur.getInt(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
             String s_type = String.valueOf(ContactsContract.CommonDataKinds.Phone.getTypeLabel(activity.getResources(),type,""));
             String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            numbers.add(contactNumber);
+            numbers.put(s_type,contactNumber);
             //Log.d("NUMBER_SIZE_INTERNO", "findContacts: " + numbers.size());
             //break;
         }
@@ -104,7 +106,16 @@ public class ContactsProvider {
             String street = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
             String city = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
             String country = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY));
-            address = street + "," + city + ',' + country;
+            if(street!=null){
+                address += street;
+            }
+            if(city!=null){
+                address+= "," + city;
+            }
+            if(country!=null){
+                address+=',' + country;
+            }
+
             addresses.add(address);
             Log.d("getAddress: ", address + "");
         }
