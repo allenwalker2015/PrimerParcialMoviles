@@ -57,6 +57,11 @@ public class MainActivity extends RuntimePermission {
         savedInstanceState.putParcelable("RV", listState);
         // Se guardan los items
         savedInstanceState.putSerializable("contact_list", contactlist);
+        //savedInstanceState.putSerializable("contact_adapter",ca);
+       // if(fca!=null) {
+
+        //    savedInstanceState.putSerializable("filtered_adapter", fca);
+        //}
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -69,8 +74,16 @@ public class MainActivity extends RuntimePermission {
         contactlist = (ArrayList<Contact>) savedInstanceState.getSerializable("contact_list");
         BottomNavigationView navigation =  findViewById(R.id.navigation);
         // Restoring adapter items
+
+        confSearch();
+        confNavigator(navigation);
+        rv = findViewById(R.id.list_container);
+
+
         if(navigation.getSelectedItemId() == R.id.navigation_favorites){
-            ca = new ContactAdapter(getFavs()) {
+
+           //fca = (ContactAdapter)savedInstanceState.getSerializable("filtered_adapter");
+            fca = new ContactAdapter(getFavs()) {
                 @Override
                 public void infoOnClickListener(Contact c) {
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -79,8 +92,13 @@ public class MainActivity extends RuntimePermission {
                     startActivity(intent);
                 }
             };
+
+            rv.setAdapter(fca);
+            fca.getFilter().filter(sv.getQuery());
+            fca.notifyDataSetChanged();
         }
         else {
+
             ca = new ContactAdapter(contactlist) {
                 @Override
                 public void infoOnClickListener(Contact c) {
@@ -90,14 +108,15 @@ public class MainActivity extends RuntimePermission {
                     startActivity(intent);
                 }
             };
+            rv.setAdapter(ca);
+            ca.getFilter().filter(sv.getQuery());
+            ca.notifyDataSetChanged();
         }
-        confSearch();
-        confNavigator(navigation);
-        rv = findViewById(R.id.list_container);
-        rv.setAdapter(ca);
+
         rv.setLayoutManager(new GridLayoutManager(this,3));
         // Restoring recycler view position
         rv.getLayoutManager().onRestoreInstanceState(mListState);
+
     }
 
     @Override
@@ -136,17 +155,36 @@ public class MainActivity extends RuntimePermission {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        ca.list = contactlist;
-                        ca.notifyDataSetChanged();
+//                        ca.list = contactlist;
+//                        ca.notifyDataSetChanged();
+                        rv.swapAdapter(ca,false);
+                        ca.getFilter().filter(sv.getQuery());
 
-
-                        Toast.makeText(getBaseContext(), "CLICK EN EL HOME", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getBaseContext(), "CLICK EN EL HOME", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.navigation_favorites:
 
-                        ca.list = getFavs();
-                        ca.notifyDataSetChanged();
-                        Toast.makeText(getBaseContext(), "CLICK EN EL FAVS", Toast.LENGTH_SHORT).show();
+//                        ca.list = getFavs();
+//                        ca.notifyDataSetChanged();
+                        if(fca==null)fca =  new ContactAdapter(getFavs()) {
+                            @Override
+                            public void infoOnClickListener(Contact c) {
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                Intent intent = new Intent(getBaseContext(), ContactInfo.class);
+                                intent.putExtra("Contact", c);
+                                startActivity(intent);
+                            }
+                        };
+                        else {
+
+                            fca.list = getFavs();
+
+
+                        }
+                        fca.getFilter().filter(sv.getQuery());
+                        fca.notifyDataSetChanged();
+                        rv.swapAdapter(fca,false);
+                        //Toast.makeText(getBaseContext(), "CLICK EN EL FAVS", Toast.LENGTH_SHORT).show();
                         return true;
                 }
                 return false;
@@ -155,6 +193,7 @@ public class MainActivity extends RuntimePermission {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
     public void confSearch(){
+        final BottomNavigationView navigation =  findViewById(R.id.navigation);
         sv = findViewById(R.id.prim_search_bar);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -165,8 +204,16 @@ public class MainActivity extends RuntimePermission {
             @Override
             public boolean onQueryTextChange(String query) {
                 //FILTER AS YOU TYPE
+                switch (navigation.getSelectedItemId()){
+                    case R.id.navigation_home:
+                        ca.getFilter().filter(query);
+                    break;
+                    case R.id.navigation_favorites:
+                        fca.getFilter().filter(query);
+                        break;
+                }
 
-                ca.getFilter().filter(query);
+
                 return false;
             }
         });

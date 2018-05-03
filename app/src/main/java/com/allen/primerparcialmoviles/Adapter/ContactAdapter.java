@@ -17,9 +17,10 @@ import com.allen.primerparcialmoviles.Data.Contact;
 import com.allen.primerparcialmoviles.Filter.ContactFilter;
 import com.allen.primerparcialmoviles.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> implements Filterable {
+public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> implements Filterable,Serializable {
 
     public ArrayList<Contact> list,filterList;
     public ContactFilter filter;
@@ -134,6 +135,13 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         }
 
         return filter;
+    }
+
+
+    public void setFilter(ContactFilter filter) {
+
+            this.filter = filter;
+
     }
 
     public Boolean getFavs() {

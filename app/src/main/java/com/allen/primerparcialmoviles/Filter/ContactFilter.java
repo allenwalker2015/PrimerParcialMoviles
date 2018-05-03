@@ -5,9 +5,10 @@ import android.widget.Filter;
 import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ContactFilter extends Filter{
+public class ContactFilter extends Filter implements Serializable{
     ContactAdapter adapter;
     ArrayList<Contact> filterList;
     Boolean onlyfavs;
