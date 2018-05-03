@@ -27,6 +27,7 @@ public class MainActivity extends RuntimePermission {
     RecyclerView rv;
     GridLayoutManager gl;
     ContactAdapter ca;
+    ContactAdapter fca;
     SearchView sv;
     ContactsProvider cp;
     private ArrayList<Contact> contactlist;
@@ -164,6 +165,7 @@ public class MainActivity extends RuntimePermission {
             @Override
             public boolean onQueryTextChange(String query) {
                 //FILTER AS YOU TYPE
+
                 ca.getFilter().filter(query);
                 return false;
             }
