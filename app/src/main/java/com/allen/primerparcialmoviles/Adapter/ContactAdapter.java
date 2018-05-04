@@ -92,7 +92,7 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         holder.info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "CLICK EN INFO", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "CLICK EN INFO", Toast.LENGTH_SHORT).show();
                 infoOnClickListener(list.get(position));
             }
         });
@@ -122,9 +122,6 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
             star = itemView.findViewById(R.id.button_star);
             info = itemView.findViewById(R.id.button_info);
         }
-
-
-
     }
 
     @Override
@@ -133,24 +130,23 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         {
             filter=new ContactFilter(list,this,favs);
         }
-
         return filter;
     }
 
+//
+//    public void setFilter(ContactFilter filter) {
+//
+//            this.filter = filter;
+//
+//    }
 
-    public void setFilter(ContactFilter filter) {
-
-            this.filter = filter;
-
-    }
-
-    public Boolean getFavs() {
-        return favs;
-    }
-
-    public void setFavs(Boolean favs) {
-        this.favs = favs;
-    }
+//    public Boolean getFavs() {
+//        return favs;
+//    }
+//
+//    public void setFavs(Boolean favs) {
+//        this.favs = favs;
+//    }
 
 
 }

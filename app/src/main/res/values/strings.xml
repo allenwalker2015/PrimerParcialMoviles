@@ -9,5 +9,15 @@
     <string name="info_name">Name</string>
     <string name="info_birthday">Birthday</string>
     <string name="info_address">Address</string>
+    <string name="title_activity_edit_contact">New Contact</string>
+    <string name="createname">Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Mail</string>
+    <string name="address">Address</string>
+    <string name="id">Id</string>
+    <string name="phone">Phone</string>
+    <string name="add">Add</string>
+    <string name="birthday">Birthday</string>
+    <string name="search_hint" />
 </resources>
 

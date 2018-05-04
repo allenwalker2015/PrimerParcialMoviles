@@ -1,9 +1,12 @@
 package com.allen.primerparcialmoviles.Adapter;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -17,12 +20,13 @@ import com.allen.primerparcialmoviles.R;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder>{
+public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder> {
     View v;
     ViewHolder vh;
-    LinkedHashMap<String,String> list;
+    LinkedHashMap<String, String> list;
     Context context;
-    public PhoneAdapter(Context context, LinkedHashMap<String,String> list){
+
+    public PhoneAdapter(Context context, LinkedHashMap<String, String> list) {
         this.context = context;
         this.list = list;
     }
@@ -30,13 +34,13 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder>{
     @NonNull
     @Override
     public PhoneAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.phone_list_item,parent,false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.phone_list_item, parent, false);
         vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PhoneAdapter.ViewHolder holder,final int position) {
+    public void onBindViewHolder(@NonNull PhoneAdapter.ViewHolder holder, final int position) {
         final String value = (new ArrayList<String>(list.values())).get(position);
         final String type = (new ArrayList<String>(list.keySet())).get(position);
         holder.number.setText(value);
@@ -44,8 +48,26 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder>{
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", value, null));
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + value));
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 context.startActivity(intent);
+            }
+        });
+        holder.sms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", value, null)));
             }
         });
     }
