@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.allen.primerparcialmoviles.Data.Contact;
@@ -35,7 +34,7 @@ public class EditContact extends AppCompatActivity {
         apellido = findViewById(R.id.edit_text_last_name);
         email = findViewById(R.id.edit_text_email);
         direccion = findViewById(R.id.edit_text_address);
-        image = findViewById(R.id.create_imageview_descrpition);
+        image = findViewById(R.id.contact_picture);
         birthday = findViewById(R.id.edit_text_birthday);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

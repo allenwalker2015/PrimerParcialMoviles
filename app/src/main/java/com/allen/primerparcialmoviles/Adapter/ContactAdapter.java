@@ -50,7 +50,7 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         holder.c = list.get(position);
         if(list.get(position).getPicture()!=null) {
             holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));
-        }else  holder.picture.setImageResource(R.drawable.ic_person_black);
+        }else  holder.picture.setImageResource(R.drawable.userwhite);
         imageSelect(holder, position);
         listeners(holder, position);
 

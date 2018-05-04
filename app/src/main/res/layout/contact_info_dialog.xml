@@ -23,14 +23,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@color/cardview_light_background"
+                android:background="#80cbc4"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_person_black"/>
+                android:src="@drawable/userwhite"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 app:titleTextColor="#ffffff"
+                app:theme="@style/ToolBarStyle"
                 android:layout_height="?attr/actionBarSize"></android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
