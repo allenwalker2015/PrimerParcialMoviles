@@ -110,7 +110,19 @@ public class ContactInfo extends AppCompatActivity {
             }
         });
         cl = findViewById(R.id.toolbar);
-        cl.setTitle(c.getName());
+        if(c.getName().size()>0) {
+            cl.setTitle(c.getName().get(0));
+        }
+        else {
+            if(c.getNumber().size()>0){
+                cl.setTitle((new ArrayList<String>(c.getNumber().values())).get(0));
+            }else if(c.getEmails().size()>0){
+                cl.setTitle(c.getEmails().get(0));
+            }else {
+                cl.setTitle("EMPTY CONTACT");
+            }
+
+        }
         if(c.getPicture()!=null)image.setImageURI(Uri.parse(c.getPicture()));
 
         phones_fragment = new PhonesFragment().newInstance(c);
@@ -134,9 +146,13 @@ public class ContactInfo extends AppCompatActivity {
     public void setInfo(){
         HashMap<Integer,Pair> m1 = new HashMap();
         int i=0;
-        m1.put(i++,new Pair(R.string.info_name,c.getName()));
-        if(c.getAddress().size()>0) {
-            m1.put(i++, new Pair(R.string.info_address, c.getAddress().get(0)));
+        if(c.getName().size()>0) {
+            m1.put(i++, new Pair(R.string.info_name, c.getName().get(1)));
+            if (c.getName().get(2) != null)
+                m1.put(i++, new Pair(R.string.last_name, c.getName().get(2)));
+        }
+        if(c.getAddress()!=null) {
+            m1.put(i++, new Pair(R.string.info_address, c.getAddress()));
         }
        // Log.d("CUMPLE",c.getBirth().toString());
         if(c.getBirth()!=null) {

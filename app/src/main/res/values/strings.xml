@@ -19,5 +19,17 @@
     <string name="add">Add</string>
     <string name="birthday">Birthday</string>
     <string name="search_hint" />
+
+    <string-array name="phone_types">
+        <item>Home</item>
+        <item>Mobile</item>
+        <item>Work</item>
+        <item>Home Fax</item>
+        <item>Work Fax</item>
+        <item>Main</item>
+        <item>Other</item>
+        <item>Custom</item>
+        <item>Pager</item>
+    </string-array>
 </resources>
 

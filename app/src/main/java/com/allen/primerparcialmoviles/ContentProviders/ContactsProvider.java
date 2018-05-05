@@ -22,11 +22,10 @@ public class ContactsProvider {
     }
 
     public ArrayList<Contact> findContacts() {
-        String name;
-        ArrayList<String> emails, addresses,birthday;
+        String addresses;
+        ArrayList<String> emails;
         LinkedHashMap<String,String> numbers;
         ArrayList<Contact> contactlist = new ArrayList<>();
-        Uri image;
         String id;
 
         // CURSOR PARAMS
@@ -38,22 +37,33 @@ public class ContactsProvider {
         //MOVING
         while (phones.moveToNext()) {
 
-            name = phones.getString(phones.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
+           // name = phones.getString(phones.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//            String last_name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+  //          Log.d("LAST_NAME",last_name);
             id = phones.getString(phones.getColumnIndex(ContactsContract.Contacts._ID));
             String nav = phones.getString(phones.getColumnIndex(ContactsContract.Contacts.Photo.PHOTO_URI));
 
             numbers = getPhoneNumbers(id);
 
             emails = getEmails(id);
-
+            ArrayList<String> names = getNames(id);
+            if(names.size()==0){
+                if(numbers.size()>0) {
+                    String num = (new ArrayList<String>(numbers.values())).get(0);
+                    names.add(num);
+                }else
+                if(emails.size()>0){
+                    String first_email = emails.get(0);
+                    names.add(first_email);
+                }
+            }
             addresses = getAddress(id);
 
 
 
             //Si la columna starred tiene 1 es que el contacto del telefono es favorito
             boolean fav = (phones.getString(phones.getColumnIndex(ContactsContract.Contacts.STARRED))).equals("1");
-            contactlist.add(new Contact(id, name, numbers, emails, addresses, nav, fav,getBirthday(id)));
+            contactlist.add(new Contact(id,names , numbers, emails, addresses, nav, fav,getBirthday(id)));
 
             //Log.d("TAM", "findContacts: "+ contactlist.size());
         }
@@ -96,11 +106,32 @@ public class ContactsProvider {
         return numbers;
     }
 
+    public ArrayList<String> getNames(String id){
+        ArrayList<String> names = new ArrayList<>();
+        String whereName = whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ?";
+        String[] whereNameParams = new String[] { ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE ,id};
+        Cursor nameCur = activity.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        while (nameCur.moveToNext()) {
+            String given = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+            String family = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+            String display = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME));
+           // Log.d("NAME",given.toString());
+           // Log.d("LAST_NAME",family.toString());
+           // Log.d("FULL NAME",display.toString());
 
-    public ArrayList<String> getAddress(String id) {
+            names.add(display);
+            names.add(given);
+            names.add(family);
+
+        }
+        nameCur.close();
+        return names;
+    }
+
+    public String getAddress(String id) {
         Uri postal_uri = ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
         Cursor postal_cursor = activity.getContentResolver().query(postal_uri, null, ContactsContract.Data.CONTACT_ID + "=" + id, null, null);
-        ArrayList<String> addresses = new ArrayList<>();
+        String addresses=null;
         while (postal_cursor.moveToNext()) {
             String address = "";
             String street = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
@@ -115,12 +146,9 @@ public class ContactsProvider {
             if(country!=null){
                 address+=',' + country;
             }
-
-            addresses.add(address);
-            Log.d("getAddress: ", address + "");
+            addresses = address;
         }
         postal_cursor.close();
-        Log.d("getAddress: ", addresses.size() + "");
         return addresses;
     }
 
@@ -147,16 +175,16 @@ public class ContactsProvider {
         }
         birthdayCur.close();
 
-        Log.d("CUMPLE", "getBirthday: "+birthday);
+       // Log.d("CUMPLE", "getBirthday: "+birthday);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             Date date = format.parse(birthday);
-            Log.d("FECHA",date.toString());
+            //Log.d("FECHA",date.toString());
             return date;
         } catch (ParseException e) {
-            e.printStackTrace();
-            Log.d("ERROR", "getBirthday: ERROR");
+            //e.printStackTrace();
+           // Log.d("ERROR", "getBirthday: ERROR");
             return null;
         }
 

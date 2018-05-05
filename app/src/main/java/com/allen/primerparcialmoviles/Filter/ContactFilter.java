@@ -1,5 +1,6 @@
 package com.allen.primerparcialmoviles.Filter;
 
+import android.util.Log;
 import android.widget.Filter;
 
 import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
@@ -35,20 +36,17 @@ public class ContactFilter extends Filter implements Serializable{
 
             for (int i=0;i<filterList.size();i++)
             {
-                //CHECK IF ONLY FAVS
-                if(onlyfavs){
-                    if (filterList.get(i).getName().toUpperCase().contains(constraint) && filterList.get(i).isFavorite()) {
+                if(filterList.get(i).getName().size()>0) {
+                    //CHECK
+                    if (filterList.get(i).getName().get(0).toUpperCase().contains(constraint)) {
                         //ADD PLAYER TO FILTERED PLAYERS
                         filteredContacts.add(filterList.get(i));
                     }
                 }
-                //CHECK
                 else {
-                    if (filterList.get(i).getName().toUpperCase().contains(constraint)) {
-                        //ADD PLAYER TO FILTERED PLAYERS
-                        filteredContacts.add(filterList.get(i));
-                    }
+                    Log.d("ESTA_VACIO", "performFiltering: " + filterList.get(i).getId());
                 }
+
             }
 
             results.count=filteredContacts.size();

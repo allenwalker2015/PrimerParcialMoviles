@@ -44,13 +44,23 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder, final int position) {
+        if(list.get(position).getName().size()>0) {
+            holder.name.setText(list.get(position).getName().get(0));
+        }
+        else {
+            if(list.get(position).getNumber().size()>0){
 
-        holder.name.setText(list.get(position).getName());
+            }else if(list.get(position).getEmails().size()>0){
+                holder.name.setText(list.get(position).getEmails().get(0));
+            }else {
+                holder.name.setText("EMPTY CONTACT");
+            }
+        }
         holder.info.setImageResource(android.R.drawable.ic_menu_info_details);
         holder.c = list.get(position);
         if(list.get(position).getPicture()!=null) {
             holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));
-        }else  holder.picture.setImageResource(R.drawable.userwhite);
+        }else  holder.picture.setImageResource(R.drawable.userwhite_min);
         imageSelect(holder, position);
         listeners(holder, position);
 

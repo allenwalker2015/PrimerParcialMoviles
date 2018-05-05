@@ -11,15 +11,15 @@ import java.util.LinkedHashMap;
 
 public class Contact implements Serializable{
     private String id;
-    private String name;
-    private ArrayList<String> emails,address;
+    //private String name;
+    private ArrayList<String> emails,name;
     private LinkedHashMap<String,String> number;
-    private String picture;
+    private String picture,address;
     private boolean favorite;
     private Date birth;
 
 
-    public Contact(String id, String name, LinkedHashMap<String,String> number, ArrayList<String> emails, ArrayList<String> address, String picture, boolean favorite, Date birth) {
+    public Contact(String id, ArrayList<String> name, LinkedHashMap<String,String> number, ArrayList<String> emails, String address, String picture, boolean favorite, Date birth) {
         this.name = name;
         this.number = number;
         this.address = address;
@@ -30,11 +30,11 @@ public class Contact implements Serializable{
         this.birth = birth;
     }
 
-    public String getName() {
+    public ArrayList<String> getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(ArrayList<String> name) {
         this.name = name;
     }
 
@@ -86,11 +86,11 @@ public class Contact implements Serializable{
         this.birth = birth;
     }
 
-    public ArrayList<String> getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(ArrayList<String> address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 }
