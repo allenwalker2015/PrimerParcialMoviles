@@ -31,5 +31,10 @@
         <item>Custom</item>
         <item>Pager</item>
     </string-array>
+    <string name="photo_picker_title">Add Photo!</string>
+    <string name="photo_picker_take_photo">Take Photo</string>
+    <string name="photo_picker_gallery">Choose from Library</string>
+    <string name="photo_picker_cancel">Cancel</string>
+
 </resources>
 

@@ -1,8 +1,10 @@
 package com.allen.primerparcialmoviles.Adapter;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.allen.primerparcialmoviles.Data.Contact;
+import com.allen.primerparcialmoviles.Data.URIPath;
 import com.allen.primerparcialmoviles.Filter.ContactFilter;
 import com.allen.primerparcialmoviles.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -25,13 +31,15 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
     public ArrayList<Contact> list,filterList;
     public ContactFilter filter;
     private View v;
+    private Context context;
     private Boolean favs=false;
 
 
 
-    public ContactAdapter(ArrayList<Contact> list) {
+    public ContactAdapter(ArrayList<Contact> list, Context context) {
         this.list = list;
         this.filterList = list;
+        this.context = context;
     }
 
     @NonNull
@@ -58,8 +66,17 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         }
         holder.info.setImageResource(android.R.drawable.ic_menu_info_details);
         holder.c = list.get(position);
+        Log.d("URI", "onBindViewHolder: "+list.get(position).getPicture());
         if(list.get(position).getPicture()!=null) {
-            holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));
+            if(list.get(position).getPicture().contains("com.android.contacts")){
+                holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));
+            }
+            else {
+                Uri uri = Uri.parse(list.get(position).getPicture());
+                Glide.with(context).load(new File(URIPath.getRealPathFromURI(context, uri))).
+                        into(holder.picture);
+            }
+           // holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));
         }else  holder.picture.setImageResource(R.drawable.userwhite_min);
         imageSelect(holder, position);
         listeners(holder, position);

@@ -91,7 +91,7 @@ public class MainActivity extends RuntimePermission {
         if(navigation.getSelectedItemId() == R.id.navigation_favorites){
 
            //fca = (ContactAdapter)savedInstanceState.getSerializable("filtered_adapter");
-            fca = new ContactAdapter(getFavs()) {
+            fca = new ContactAdapter(getFavs(), MainActivity.this) {
                 @Override
                 public void infoOnClickListener(Contact c) {
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -107,7 +107,7 @@ public class MainActivity extends RuntimePermission {
         }
         else {
 
-            ca = new ContactAdapter(contactlist) {
+            ca = new ContactAdapter(contactlist, MainActivity.this) {
                 @Override
                 public void infoOnClickListener(Contact c) {
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -136,7 +136,7 @@ public class MainActivity extends RuntimePermission {
         contactlist = cp.findContacts();
         rv = findViewById(R.id.list_container);
         BottomNavigationView navigation =  findViewById(R.id.navigation);
-        ca = new ContactAdapter(contactlist) {
+        ca = new ContactAdapter(contactlist, MainActivity.this) {
             @Override
             public void infoOnClickListener(Contact c) {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -170,7 +170,7 @@ public class MainActivity extends RuntimePermission {
 //                        ca.notifyDataSetChanged();
                         rv.swapAdapter(ca,false);
                         if(ca==null){
-                            ca = new ContactAdapter(contactlist) {
+                            ca = new ContactAdapter(contactlist, MainActivity.this) {
                                 @Override
                                 public void infoOnClickListener(Contact c) {
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -190,7 +190,7 @@ public class MainActivity extends RuntimePermission {
 //                        ca.list = getFavs();
 //                        ca.notifyDataSetChanged();
 //                        if(fca==null) {
-                            fca = new ContactAdapter(getFavs()) {
+                            fca = new ContactAdapter(getFavs(), MainActivity.this) {
                                 @Override
                                 public void infoOnClickListener(Contact c) {
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

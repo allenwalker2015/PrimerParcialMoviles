@@ -17,9 +17,12 @@ import android.widget.TextView;
 
 import com.allen.primerparcialmoviles.Adapter.InfoAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
+import com.allen.primerparcialmoviles.Data.URIPath;
 import com.allen.primerparcialmoviles.Fragments.EmailFragment;
 import com.allen.primerparcialmoviles.Fragments.PhonesFragment;
+import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,7 +126,18 @@ public class ContactInfo extends AppCompatActivity {
             }
 
         }
-        if(c.getPicture()!=null)image.setImageURI(Uri.parse(c.getPicture()));
+        if(c.getPicture()!=null){
+            if(c.getPicture().contains("com.android.contacts")){
+                image.setImageURI(Uri.parse(c.getPicture()));
+            }
+            else {
+
+
+                Uri uri = Uri.parse(c.getPicture());
+                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, uri))).
+                        into(image);
+            }
+        }
 
         phones_fragment = new PhonesFragment().newInstance(c);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
