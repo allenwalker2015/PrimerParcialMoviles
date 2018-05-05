@@ -64,7 +64,7 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
                 holder.name.setText("EMPTY CONTACT");
             }
         }
-        holder.info.setImageResource(android.R.drawable.ic_menu_info_details);
+        //holder.info.setImageResource(android.R.drawable.ic_menu_info_details);
         holder.c = list.get(position);
         Log.d("URI", "onBindViewHolder: "+list.get(position).getPicture());
         if(list.get(position).getPicture()!=null) {
@@ -139,7 +139,7 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
         TextView name;
         ImageView picture;
         ImageButton star;
-        ImageButton info;
+        View info;
         Contact c;
 
         public ViewHolder(View itemView) {
