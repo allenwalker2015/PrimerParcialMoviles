@@ -4,12 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
 import com.allen.primerparcialmoviles.ContentProviders.ContactsProvider;
 import com.allen.primerparcialmoviles.Data.Contact;
+import com.allen.primerparcialmoviles.Fragments.ContactInfoFragment;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,7 @@ public class MainActivity extends RuntimePermission {
     ContactAdapter ca;
     ContactAdapter fca;
     SearchView sv;
+    ContactInfoFragment cif;
     ContactsProvider cp;
     private ArrayList<Contact> contactlist;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener;
@@ -94,10 +98,7 @@ public class MainActivity extends RuntimePermission {
             fca = new ContactAdapter(getFavs(), MainActivity.this) {
                 @Override
                 public void infoOnClickListener(Contact c) {
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    Intent intent = new Intent(getBaseContext(), ContactInfo.class);
-                    intent.putExtra("Contact", c);
-                    startActivity(intent);
+                   openContactInfo(c);
                 }
             };
 
@@ -110,10 +111,7 @@ public class MainActivity extends RuntimePermission {
             ca = new ContactAdapter(contactlist, MainActivity.this) {
                 @Override
                 public void infoOnClickListener(Contact c) {
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    Intent intent = new Intent(getBaseContext(), ContactInfo.class);
-                    intent.putExtra("Contact", c);
-                    startActivity(intent);
+                   openContactInfo(c);
                 }
             };
             rv.setAdapter(ca);
@@ -122,10 +120,29 @@ public class MainActivity extends RuntimePermission {
         }
         setNewContactListener();
         confNavigator(navigation);
-        rv.setLayoutManager(new GridLayoutManager(this,3));
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().orientation == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            rv.setLayoutManager(new GridLayoutManager(this, 1));
+        }
+        else {
+            rv.setLayoutManager(new GridLayoutManager(this, 3));
+        }
         // Restoring recycler view position
         rv.getLayoutManager().onRestoreInstanceState(mListState);
+    }
 
+    public void openContactInfo(Contact c){
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().orientation == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+            cif = new ContactInfoFragment().newInstance(c);
+            transaction1.replace(R.id.contact_info_fragment,cif);
+            transaction1.addToBackStack(null);
+            transaction1.commit();
+        }else {
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            Intent intent = new Intent(getBaseContext(), ContactInfo.class);
+            intent.putExtra("Contact", c);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -139,14 +156,14 @@ public class MainActivity extends RuntimePermission {
         ca = new ContactAdapter(contactlist, MainActivity.this) {
             @Override
             public void infoOnClickListener(Contact c) {
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                Intent intent = new Intent(getBaseContext(), ContactInfo.class);
-                intent.putExtra("Contact", c);
-                startActivity(intent);
+              openContactInfo(c);
             }
         };
-
-        gl = new GridLayoutManager(this, 3);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().orientation == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            gl = new GridLayoutManager(this, 1);
+        }else {
+            gl = new GridLayoutManager(this, 3);
+        }
         rv.setLayoutManager(gl);
         rv.setAdapter(ca);
         confSearch();
@@ -173,10 +190,7 @@ public class MainActivity extends RuntimePermission {
                             ca = new ContactAdapter(contactlist, MainActivity.this) {
                                 @Override
                                 public void infoOnClickListener(Contact c) {
-                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                    Intent intent = new Intent(getBaseContext(), ContactInfo.class);
-                                    intent.putExtra("Contact", c);
-                                    startActivity(intent);
+                                   openContactInfo(c);
                                 }
                             };
 
@@ -193,10 +207,7 @@ public class MainActivity extends RuntimePermission {
                             fca = new ContactAdapter(getFavs(), MainActivity.this) {
                                 @Override
                                 public void infoOnClickListener(Contact c) {
-                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                    Intent intent = new Intent(getBaseContext(), ContactInfo.class);
-                                    intent.putExtra("Contact", c);
-                                    startActivity(intent);
+                                    openContactInfo(c);
                                 }
                             };
 //                        }
