@@ -14,8 +14,10 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.allen.primerparcialmoviles.Activities.MainActivity;
 import com.allen.primerparcialmoviles.Adapter.InfoAdapter;
 import com.allen.primerparcialmoviles.Adapter.PhoneAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
@@ -33,6 +35,7 @@ public class ContactInfoFragment extends Fragment {
     ImageView image;
     View v;
     RecyclerView rv;
+    ImageButton edit,delete;
     android.support.v7.widget.Toolbar cl;
     TabLayout tl;
     PhonesFragment phones_fragment;
@@ -63,6 +66,8 @@ public class ContactInfoFragment extends Fragment {
         rv = v.findViewById(R.id.info_recycler);
         rv.setNestedScrollingEnabled(false);
         rv.setHasFixedSize(true);
+        edit= v.findViewById(R.id.button_edit_contact);
+        delete = v.findViewById(R.id.button_remove_contact);
         setInfo();
 
 //        lv = findViewById(R.id.basic_info);
@@ -157,7 +162,25 @@ public class ContactInfoFragment extends Fragment {
         transaction.add(R.id.frame_info,phones_fragment);
         transaction.commit();
 
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity ma = (MainActivity) getActivity();
+                int index = ma.ca.list.indexOf(c);
+                ma.ca.list.remove(c);
+                ma.ca.notifyItemRemoved(index);
+                ma.ca.notifyDataSetChanged();
+                getActivity().getSupportFragmentManager().beginTransaction().remove(ContactInfoFragment.this).commit();
 
+            }
+        });
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         return  v;
     }
 

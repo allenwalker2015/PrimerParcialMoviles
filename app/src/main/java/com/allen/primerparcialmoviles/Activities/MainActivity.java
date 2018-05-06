@@ -37,8 +37,8 @@ public class MainActivity extends RuntimePermission {
     private static final int REQUEST_PERMISSION = 10;
     RecyclerView rv;
     GridLayoutManager gl;
-    ContactAdapter ca;
-    ContactAdapter fca;
+    public ContactAdapter ca;
+    public ContactAdapter fca;
     SearchView sv;
     ContactInfoFragment cif;
     ContactsProvider cp;

@@ -55,9 +55,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:layout_gravity="right"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_margin="16dp"
                     android:clickable="true"
                     android:src="@drawable/edit_white" />
             </RelativeLayout>

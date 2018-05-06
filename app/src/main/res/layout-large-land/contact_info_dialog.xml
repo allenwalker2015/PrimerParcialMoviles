@@ -35,6 +35,7 @@
                     android:src="@drawable/userwhite" />
 
                 <ImageButton
+                    android:id="@id/button_edit_contact"
                     style="@style/Widget.Design.FloatingActionButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
