@@ -1,4 +1,4 @@
-package com.allen.primerparcialmoviles;
+package com.allen.primerparcialmoviles.Activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -27,12 +27,14 @@ import com.allen.primerparcialmoviles.Adapter.ContactAdapter;
 import com.allen.primerparcialmoviles.ContentProviders.ContactsProvider;
 import com.allen.primerparcialmoviles.Data.Contact;
 import com.allen.primerparcialmoviles.Fragments.ContactInfoFragment;
+import com.allen.primerparcialmoviles.R;
+import com.allen.primerparcialmoviles.PermisionManager.RuntimePermission;
 
 import java.util.ArrayList;
 
 public class MainActivity extends RuntimePermission {
-    private static final int REQUEST_PERMISSION = 10;
     static final int NEW_CONTACT_REQUEST = 1;
+    private static final int REQUEST_PERMISSION = 10;
     RecyclerView rv;
     GridLayoutManager gl;
     ContactAdapter ca;

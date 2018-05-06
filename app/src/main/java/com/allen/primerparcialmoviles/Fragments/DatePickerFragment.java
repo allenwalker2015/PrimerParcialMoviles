@@ -1,4 +1,4 @@
-package com.allen.primerparcialmoviles;
+package com.allen.primerparcialmoviles.Fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -26,6 +26,6 @@ public  class DatePickerFragment extends DialogFragment implements DatePickerDia
 
     @Override
     public void onDateSet(DatePicker datePicker, int anio, int mes, int dia) {
-        Toast.makeText(getActivity(), "Selecciono: " + dia + "/" + mes + "/" + anio, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Selecciono: " + dia + "/" + mes + "/" + anio, Toast.LENGTH_SHORT).show();
     }
 }

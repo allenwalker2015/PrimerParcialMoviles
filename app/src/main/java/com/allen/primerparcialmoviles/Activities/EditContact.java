@@ -1,4 +1,4 @@
-package com.allen.primerparcialmoviles;
+package com.allen.primerparcialmoviles.Activities;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -26,6 +26,7 @@ import com.allen.primerparcialmoviles.Adapter.MailEditAdapter;
 import com.allen.primerparcialmoviles.Adapter.PhoneEditAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
 import com.allen.primerparcialmoviles.Data.URIPath;
+import com.allen.primerparcialmoviles.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 

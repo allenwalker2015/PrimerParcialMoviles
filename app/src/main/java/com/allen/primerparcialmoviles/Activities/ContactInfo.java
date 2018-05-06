@@ -1,4 +1,4 @@
-package com.allen.primerparcialmoviles;
+package com.allen.primerparcialmoviles.Activities;
 
 
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +20,7 @@ import com.allen.primerparcialmoviles.Data.Contact;
 import com.allen.primerparcialmoviles.Data.URIPath;
 import com.allen.primerparcialmoviles.Fragments.EmailFragment;
 import com.allen.primerparcialmoviles.Fragments.PhonesFragment;
+import com.allen.primerparcialmoviles.R;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
