@@ -18,6 +18,8 @@ public class Contact implements Serializable{
     private boolean favorite;
     private Date birth;
 
+    public Contact() {
+    }
 
     public Contact(String id, ArrayList<String> name, LinkedHashMap<String,String> number, ArrayList<String> emails, String address, String picture, boolean favorite, Date birth) {
         this.name = name;

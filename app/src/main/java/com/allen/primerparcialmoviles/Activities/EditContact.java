@@ -31,6 +31,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,10 +50,10 @@ public class EditContact extends AppCompatActivity {
     FloatingActionButton fab;
 
     //Variables necesarias para recursos que son dinamicos
-    LinkedHashMap<String, String> phones;
-    ArrayList<String> emails;
-    String picture;
-
+//    LinkedHashMap<String, String> phones;
+//    ArrayList<String> emails;
+    //String picture;
+    Contact c;
     //Adaptadores para sus respectivos recycler
     PhoneEditAdapter pa;
     MailEditAdapter ma;
@@ -77,14 +79,21 @@ public class EditContact extends AppCompatActivity {
         new_phone = findViewById(R.id.new_phone_number);
         new_mail = findViewById(R.id.new_email);
         fab = findViewById(R.id.fab);
+        if(getIntent().getSerializableExtra("Contact")!=null){
+            c = (Contact)getIntent().getSerializableExtra("Contact");
+            setInfo();
+        }
+        else c= new Contact();
+
+
         if (savedInstanceState == null) {
-            if (phones == null) {
-                phones = new LinkedHashMap<>();
+            if (c.getNumber() == null) {
+                c.setNumber(new LinkedHashMap<String,String>());
 
             }
 
-            if (emails == null) {
-                emails = new ArrayList<>();
+            if (c.getEmails() == null) {
+                c.setEmails(new ArrayList<String>());
 
             }
 
@@ -103,29 +112,31 @@ public class EditContact extends AppCompatActivity {
         savedInstanceState.putParcelable("phones_recycler_state", phones_recycler.getLayoutManager().onSaveInstanceState());
         savedInstanceState.putParcelable("email_recycler_state", email_recycler.getLayoutManager().onSaveInstanceState());
         // Se guardan las listas de los adapters
-        savedInstanceState.putSerializable("phone_list", pa.getList());
-        savedInstanceState.putSerializable("email_list", ma.getList());
+        //savedInstanceState.putSerializable("phone_list", pa.getList());
+        //savedInstanceState.putSerializable("email_list", ma.getList());
         //Se guarda la uri de la imagen seleccionada
-        savedInstanceState.putString("profile_picture", picture);
-
+        //savedInstanceState.putString("profile_picture", picture);
+        //Se guarda el contacto
+        c.setNumber(pa.getList());
+        savedInstanceState.putSerializable("new_contact", c);
         super.onSaveInstanceState(savedInstanceState);
     }
 
     public void restorePreviousState(Bundle savedInstanceState) {
-
-        phones = (LinkedHashMap<String, String>) savedInstanceState.getSerializable("phone_list");
-        emails = (ArrayList<String>) savedInstanceState.getSerializable("email_list");
+        c = (Contact) savedInstanceState.getSerializable("new_contact");
+//        phones = (LinkedHashMap<String, String>) savedInstanceState.getSerializable("phone_list");
+//        emails = (ArrayList<String>) savedInstanceState.getSerializable("email_list");
         confAdapters();
         phones_recycler.getLayoutManager().onRestoreInstanceState(savedInstanceState.
                 getParcelable("phones_recycler_state"));
         email_recycler.getLayoutManager().onRestoreInstanceState(savedInstanceState.
                 getParcelable("email_recycler_state"));
-        picture = savedInstanceState.getString("profile_picture");
-        if (picture != null) {
-            if (picture.contains("com.android.contacts")) {
-                image.setImageURI(Uri.parse(picture));
+        //picture = savedInstanceState.getString("profile_picture");
+        if (c.getPicture() != null) {
+            if (c.getPicture().contains("com.android.contacts")) {
+                image.setImageURI(Uri.parse(c.getPicture()));
             } else {
-                Uri uri = Uri.parse(picture);
+                Uri uri = Uri.parse(c.getPicture());
                 Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, uri))).apply(RequestOptions.overrideOf(150, 150)).into(image);
             }
         }
@@ -140,11 +151,11 @@ public class EditContact extends AppCompatActivity {
                 R.array.phone_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type.setAdapter(adapter);
-        pa = new PhoneEditAdapter(this, phones);
+        pa = new PhoneEditAdapter(this, c.getNumber());
         phones_recycler.setLayoutManager(new LinearLayoutManager(this));
         phones_recycler.setAdapter(pa);
 
-        ma = new MailEditAdapter(this, emails);
+        ma = new MailEditAdapter(this, c.getEmails());
         email_recycler.setLayoutManager(new LinearLayoutManager(this));
         email_recycler.setAdapter(ma);
     }
@@ -167,8 +178,9 @@ public class EditContact extends AppCompatActivity {
                 //emails.add(email.getText().toString());
                 String address = direction.getText().toString();
                 Boolean favorite = false;
-
-                Contact c = new Contact(id, name, pa.getList(), ma.getList(), address, picture, favorite, new Date());
+                c.setName(name);
+                c.setAddress(address);
+                //Contact c = new Contact(id, name, pa.getList(), ma.getList(), address, picture, favorite, new Date());
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("new_contact", c);
                 setResult(Activity.RESULT_OK, returnIntent);
@@ -206,8 +218,10 @@ public class EditContact extends AppCompatActivity {
         birthday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar fechaActual = Calendar.getInstance();
-
+                    Calendar fechaActual = Calendar.getInstance();
+                if(c.getBirth()!=null) {
+                    fechaActual.setTime(c.getBirth());
+                }
                 int anio = fechaActual.get(Calendar.YEAR);
                 int mes = fechaActual.get(Calendar.MONTH);
                 int dia = fechaActual.get(Calendar.DAY_OF_MONTH);
@@ -216,7 +230,13 @@ public class EditContact extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear,
                                           int dayOfMonth) {
-                        birthday.setText(dayOfMonth + "/" + monthOfYear + "/" + year);
+                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                        try {
+                            birthday.setText( dayOfMonth+ "/" + (monthOfYear+1) + "/" +   year);
+                            c.setBirth(format.parse(dayOfMonth+ "/" + (monthOfYear+1) + "/" +  year));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 };
@@ -256,11 +276,28 @@ public class EditContact extends AppCompatActivity {
         builder.show();
     }
 
+    public void setInfo(){
+        if(c.getName().size()>1) {
+            given_name.setText(c.getName().get(1));
+        }
+        if(c.getName().size()>2) {
+            given_name.setText(c.getName().get(2));
+        }
+        if(c.getAddress()!=null){
+            direction.setText(c.getAddress());
+        }
+        if(c.getBirth()!=null){
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            birthday.setText(format.format(c.getBirth()));
+        }
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             Uri selectedImageURI = data.getData();
-            picture = selectedImageURI.toString();
+            c.setPicture(selectedImageURI.toString());
 
             Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, selectedImageURI))).apply(RequestOptions.overrideOf(150, 150)).into(image);
             image.setImageURI(selectedImageURI);

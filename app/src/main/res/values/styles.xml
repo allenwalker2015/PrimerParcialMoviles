@@ -30,4 +30,14 @@
         <!--<item name="actionOverflowButtonStyle">@style/ActionButtonOverflowStyle</item>-->
         <!--<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>-->
     </style>
+
+    <style name="FloatingActionButton_RemoveButton">
+        <item name="android:background">@drawable/design_fab_background</item>
+        <item name="backgroundTint">?attr/colorAccent</item>
+        <item name="fabSize">auto</item>
+        <item name="elevation">@dimen/design_fab_elevation</item>
+        <item name="pressedTranslationZ">@dimen/design_fab_translation_z_pressed</item>
+        <item name="rippleColor">?attr/colorControlHighlight</item>
+        <item name="borderWidth">@dimen/design_fab_border_width</item>
+    </style>
 </resources>
