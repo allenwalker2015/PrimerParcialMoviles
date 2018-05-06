@@ -72,6 +72,8 @@ public class PhonesFragment extends Fragment {
             c = (Contact) getArguments().getSerializable(CONTACT_PARAM);
         }
         RecyclerView rv = v.findViewById(R.id.phones_recycler);
+        rv.setNestedScrollingEnabled(false);
+        rv.setHasFixedSize(true);
         LinearLayoutManager lm = new LinearLayoutManager(v.getContext());
         rv.setLayoutManager(lm);
         //Log.d("NUMERO_EN_INFO", "onCreate: "+c.getNumber().size());

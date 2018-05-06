@@ -114,18 +114,19 @@ public class ContactInfo extends AppCompatActivity {
             }
         });
         cl = findViewById(R.id.toolbar);
-        if(c.getName().size()>0) {
-            cl.setTitle(c.getName().get(0));
-        }
-        else {
-            if(c.getNumber().size()>0){
-                cl.setTitle((new ArrayList<String>(c.getNumber().values())).get(0));
-            }else if(c.getEmails().size()>0){
-                cl.setTitle(c.getEmails().get(0));
-            }else {
-                cl.setTitle("EMPTY CONTACT");
-            }
+        if(cl!=null) {
+            if (c.getName().size() > 0) {
+                cl.setTitle(c.getName().get(0));
+            } else {
+                if (c.getNumber().size() > 0) {
+                    cl.setTitle((new ArrayList<String>(c.getNumber().values())).get(0));
+                } else if (c.getEmails().size() > 0) {
+                    cl.setTitle(c.getEmails().get(0));
+                } else {
+                    cl.setTitle("EMPTY CONTACT");
+                }
 
+            }
         }
         if(c.getPicture()!=null){
             if(c.getPicture().contains("com.android.contacts")){

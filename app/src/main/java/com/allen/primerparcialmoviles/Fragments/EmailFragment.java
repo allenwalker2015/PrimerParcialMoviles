@@ -67,6 +67,8 @@ public class EmailFragment extends Fragment {
         RecyclerView rv = v.findViewById(R.id.phones_recycler);
         LinearLayoutManager lm = new LinearLayoutManager(v.getContext());
         rv.setLayoutManager(lm);
+        rv.setNestedScrollingEnabled(false);
+        rv.setHasFixedSize(true);
         //Log.d("NUMERO_EN_INFO", "onCreate: "+c.getNumber().size());
         MailAdapter pa = new MailAdapter(v.getContext(),c.getEmails());
         //Log.d("LISTA_EN_INFO", "onCreate: "+pa.getItemCount());
