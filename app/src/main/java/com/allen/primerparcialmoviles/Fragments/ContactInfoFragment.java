@@ -97,14 +97,14 @@ public class ContactInfoFragment extends Fragment {
                         if(phones_fragment==null)phones_fragment = new PhonesFragment().newInstance(c);
                         FragmentTransaction transaction = getFragmentManager() .beginTransaction();
                         transaction.replace(R.id.frame_info,phones_fragment);
-                        transaction.addToBackStack(null);
+                        //transaction.addToBackStack(null);
                         transaction.commit();
                         break;
                     case 1:
                         if(mails_fragment==null)mails_fragment = new EmailFragment().newInstance(c);
                         FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
                         transaction1.replace(R.id.frame_info,mails_fragment);
-                        transaction1.addToBackStack(null);
+                        //transaction1.addToBackStack(null);
                         transaction1.commit();
                         break;
                     case 2:

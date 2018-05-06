@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -74,6 +75,9 @@ public class MainActivity extends RuntimePermission {
             //}
         }
     }
+        for (Fragment fragment:getSupportFragmentManager().getFragments()) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -120,8 +124,9 @@ public class MainActivity extends RuntimePermission {
         }
         setNewContactListener();
         confNavigator(navigation);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().orientation == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE)) {
             rv.setLayoutManager(new GridLayoutManager(this, 1));
+           // if(cif!=null) getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.your_container)).commit();
         }
         else {
             rv.setLayoutManager(new GridLayoutManager(this, 3));
@@ -131,13 +136,14 @@ public class MainActivity extends RuntimePermission {
     }
 
     public void openContactInfo(Contact c){
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().orientation == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE)) {
             FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
             cif = new ContactInfoFragment().newInstance(c);
             transaction1.replace(R.id.contact_info_fragment,cif);
             transaction1.addToBackStack(null);
             transaction1.commit();
         }else {
+
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             Intent intent = new Intent(getBaseContext(), ContactInfo.class);
             intent.putExtra("Contact", c);
@@ -159,7 +165,7 @@ public class MainActivity extends RuntimePermission {
               openContactInfo(c);
             }
         };
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().orientation == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE)) {
             gl = new GridLayoutManager(this, 1);
         }else {
             gl = new GridLayoutManager(this, 3);
