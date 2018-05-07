@@ -13,7 +13,7 @@ public class Contact implements Serializable{
     private String id;
     //private String name;
     private ArrayList<String> emails,name;
-    private LinkedHashMap<String,String> number;
+    private ArrayList<ArrayList<String>> number;
     private String picture,address;
     private boolean favorite;
     private Date birth;
@@ -21,7 +21,7 @@ public class Contact implements Serializable{
     public Contact() {
     }
 
-    public Contact(String id, ArrayList<String> name, LinkedHashMap<String,String> number, ArrayList<String> emails, String address, String picture, boolean favorite, Date birth) {
+    public Contact(String id, ArrayList<String> name, ArrayList<ArrayList<String>> number, ArrayList<String> emails, String address, String picture, boolean favorite, Date birth) {
         this.name = name;
         this.number = number;
         this.address = address;
@@ -40,11 +40,11 @@ public class Contact implements Serializable{
         this.name = name;
     }
 
-    public LinkedHashMap<String,String> getNumber() {
+    public ArrayList<ArrayList<String>> getNumber() {
         return number;
     }
 
-    public void setNumber(LinkedHashMap<String,String> number) {
+    public void setNumber(ArrayList<ArrayList<String>> number) {
         this.number = number;
     }
 

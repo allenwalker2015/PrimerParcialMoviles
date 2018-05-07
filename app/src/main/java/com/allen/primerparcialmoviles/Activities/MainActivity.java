@@ -35,7 +35,8 @@ import java.util.ArrayList;
 public class MainActivity extends RuntimePermission {
     static final int NEW_CONTACT_REQUEST = 1;
     private static final int REQUEST_PERMISSION = 10;
-    final int REMOVE_CONTACT_RESULT = 31, CONTACT_INFO_RESULT=32;
+
+    final int REMOVE_CONTACT_RESULT = 31, CONTACT_INFO_RESULT=32,EDIT_CONTACT_RESULT=30;
     RecyclerView rv;
     GridLayoutManager gl;
     public ContactAdapter ca;
@@ -320,6 +321,12 @@ public class MainActivity extends RuntimePermission {
                 }
 
 
+            }
+            if(resultCode == EDIT_CONTACT_RESULT){
+                Contact c = (Contact)data.getSerializableExtra("edited_contact");
+                int index = data.getIntExtra("index",-1);
+                contactlist.set(index,c);
+                ca.notifyItemChanged(index);
             }
         }
     }

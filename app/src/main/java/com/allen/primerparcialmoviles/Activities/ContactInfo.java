@@ -41,6 +41,7 @@ public class ContactInfo extends AppCompatActivity {
     ImageView image;
     RecyclerView rv;
     int index;
+    private boolean change_fragment=false;
     android.support.v7.widget.Toolbar cl;
     android.support.design.widget.TabLayout tl;
     ImageButton edit,delete;
@@ -151,20 +152,7 @@ public class ContactInfo extends AppCompatActivity {
         rv.setAdapter(infoAdapter);
 
         cl = findViewById(R.id.toolbar);
-        if(cl!=null) {
-            if (c.getName().size() > 0) {
-                cl.setTitle(c.getName().get(0));
-            } else {
-                if (c.getNumber().size() > 0) {
-                    cl.setTitle((new ArrayList<String>(c.getNumber().values())).get(0));
-                } else if (c.getEmails().size() > 0) {
-                    cl.setTitle(c.getEmails().get(0));
-                } else {
-                    cl.setTitle("EMPTY CONTACT");
-                }
-
-            }
-        }
+        setTitle();
         if(c.getPicture()!=null){
             if(c.getPicture().contains("com.android.contacts")){
                 image.setImageURI(Uri.parse(c.getPicture()));
@@ -180,6 +168,22 @@ public class ContactInfo extends AppCompatActivity {
 
 
     }
+    public void setTitle(){
+        if(cl!=null) {
+            if (c.getName().size() > 0) {
+                cl.setTitle(c.getName().get(0));
+            } else {
+                if (c.getNumber().size() > 0) {
+                    cl.setTitle(c.getNumber().get(0).get(0));
+                } else if (c.getEmails().size() > 0) {
+                    cl.setTitle(c.getEmails().get(0));
+                } else {
+                    cl.setTitle("EMPTY CONTACT");
+                }
+
+            }
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -188,9 +192,37 @@ public class ContactInfo extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 c = (Contact)data.getSerializableExtra("new_contact");
                 setInfo();
-                phones_fragment = new PhonesFragment().newInstance(c);
+                setTitle();
+                change_fragment=true;
+
             }
 
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(change_fragment)
+        {
+            phones_fragment = new PhonesFragment().newInstance(c);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_info,phones_fragment);
+            transaction.commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(change_fragment){
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("edited_contact", c);
+            returnIntent.putExtra("index", index);
+            setResult(EDIT_CONTACT_RESULT,returnIntent);
+            finish();
+        }else{
+            super.onBackPressed();
         }
 
     }

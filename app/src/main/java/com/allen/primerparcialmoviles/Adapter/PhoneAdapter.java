@@ -23,10 +23,10 @@ import java.util.LinkedHashMap;
 public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder> {
     View v;
     ViewHolder vh;
-    LinkedHashMap<String, String> list;
+   ArrayList<ArrayList<String>> list;
     Context context;
 
-    public PhoneAdapter(Context context, LinkedHashMap<String, String> list) {
+    public PhoneAdapter(Context context,ArrayList<ArrayList<String>> list) {
         this.context = context;
         this.list = list;
     }
@@ -41,8 +41,8 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull PhoneAdapter.ViewHolder holder, final int position) {
-        final String value = (new ArrayList<String>(list.values())).get(position);
-        final String type = (new ArrayList<String>(list.keySet())).get(position);
+        final String value = list.get(0).get(position);
+        final String type = list.get(1).get(position);
         holder.number.setText(value);
         holder.type.setText(type);
         holder.call.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +74,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list.get(0).size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

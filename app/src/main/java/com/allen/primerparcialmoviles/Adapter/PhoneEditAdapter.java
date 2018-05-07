@@ -21,10 +21,10 @@ public class PhoneEditAdapter extends RecyclerView.Adapter<PhoneEditAdapter.View
     ViewHolder vh;
     Context context;
 
-    public PhoneEditAdapter(Context context, LinkedHashMap<String, String> list) {
+    public PhoneEditAdapter(Context context, ArrayList<ArrayList<String>> list) {
         this.context = context;
-        this.values = new ArrayList<>(list.values());
-        this.key = new ArrayList<>(list.keySet());
+        this.values = list.get(0);
+        this.key = list.get(1);
     }
 
     @NonNull
@@ -50,31 +50,6 @@ public class PhoneEditAdapter extends RecyclerView.Adapter<PhoneEditAdapter.View
                 notifyItemRemoved(position);
             }
         });
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context,
-//                R.array.phone_types, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        holder.type.setAdapter(adapter);
-//        holder.type.
-//        holder.type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                key.set(position,parent.getSelectedItem().toString());
-//                Log.d("Selected Item", "onItemSelected: " + key.get(position));
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//        holder.remove.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-
-
 
     }
 
@@ -90,12 +65,11 @@ public class PhoneEditAdapter extends RecyclerView.Adapter<PhoneEditAdapter.View
         notifyDataSetChanged();
     }
 
-    public LinkedHashMap<String,String> getList(){
-        LinkedHashMap<String,String> list = new LinkedHashMap<>();
-        for(int i=0;i<values.size();i++){
-            list.put(key.get(i),values.get(i));
-        }
-        return list;
+    public ArrayList<ArrayList<String>> getList(){
+        ArrayList<ArrayList<String>> lista = new ArrayList<ArrayList<String>>();
+        lista.add(values);
+        lista.add(key);
+        return lista;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

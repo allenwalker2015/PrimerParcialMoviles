@@ -24,7 +24,7 @@ public class ContactsProvider {
     public ArrayList<Contact> findContacts() {
         String addresses;
         ArrayList<String> emails;
-        LinkedHashMap<String,String> numbers;
+        ArrayList<ArrayList<String>> numbers;
         ArrayList<Contact> contactlist = new ArrayList<>();
         String id;
 
@@ -49,7 +49,7 @@ public class ContactsProvider {
             ArrayList<String> names = getNames(id);
             if(names.size()==0){
                 if(numbers.size()>0) {
-                    String num = (new ArrayList<String>(numbers.values())).get(0);
+                    String num = numbers.get(0).get(0);
                     names.add(num);
                 }else
                 if(emails.size()>0){
@@ -89,21 +89,26 @@ public class ContactsProvider {
         return emails;
     }
 
-    public LinkedHashMap<String,String> getPhoneNumbers(String id) {
-        LinkedHashMap<String,String> numbers = new LinkedHashMap<>();
+    public ArrayList<ArrayList<String>> getPhoneNumbers(String id) {
+        ArrayList<ArrayList<String>> phone_data = new ArrayList<>();
+        ArrayList<String> numbers = new ArrayList<>();
+        ArrayList<String> types = new ArrayList<>();
         Cursor pCur = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[] { id }, null);
         while (pCur.moveToNext()) {
             int type = pCur.getInt(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
             String s_type = String.valueOf(ContactsContract.CommonDataKinds.Phone.getTypeLabel(activity.getResources(),type,""));
             String contactNumber = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            numbers.put(s_type,contactNumber);
+            numbers.add(contactNumber);
+            types.add(s_type);
             //Log.d("NUMBER_SIZE_INTERNO", "findContacts: " + numbers.size());
             //break;
         }
         //Log.d("NUMBER_SIZE", "findContacts: " + numbers.size());
         pCur.close();
-        return numbers;
+        phone_data.add(numbers);
+        phone_data.add(types);
+        return phone_data;
     }
 
     public ArrayList<String> getNames(String id){

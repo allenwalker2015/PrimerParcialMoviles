@@ -88,7 +88,10 @@ public class EditContact extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             if (c.getNumber() == null) {
-                c.setNumber(new LinkedHashMap<String,String>());
+                ArrayList<ArrayList<String>> lista = new ArrayList<ArrayList<String>>();
+                lista.add(new ArrayList<String>());
+                lista.add(new ArrayList<String>());
+                c.setNumber(lista);
 
             }
 
@@ -182,7 +185,7 @@ public class EditContact extends AppCompatActivity {
                 c.setAddress(address);
                 //Contact c = new Contact(id, name, pa.getList(), ma.getList(), address, picture, favorite, new Date());
                 Intent returnIntent = new Intent();
-                LinkedHashMap<String,String> l = pa.getList();
+                ArrayList<ArrayList<String>> l = pa.getList();
                 c.setNumber(l);
                 returnIntent.putExtra("new_contact", c);
                 setResult(Activity.RESULT_OK, returnIntent);
