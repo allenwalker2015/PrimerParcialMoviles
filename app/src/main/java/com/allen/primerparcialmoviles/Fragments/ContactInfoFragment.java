@@ -1,6 +1,8 @@
 package com.allen.primerparcialmoviles.Fragments;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,9 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.allen.primerparcialmoviles.Activities.EditContact;
 import com.allen.primerparcialmoviles.Activities.MainActivity;
 import com.allen.primerparcialmoviles.Adapter.InfoAdapter;
-import com.allen.primerparcialmoviles.Adapter.PhoneAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
 import com.allen.primerparcialmoviles.Data.URIPath;
 import com.allen.primerparcialmoviles.R;
@@ -27,15 +29,15 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class ContactInfoFragment extends Fragment {
+    final int EDIT_CONTACT_RESULT_FRAGMENT = 41;
     ImageView image;
     View v;
     RecyclerView rv;
-    ImageButton edit,delete;
+    ImageButton edit, delete;
     android.support.v7.widget.Toolbar cl;
     TabLayout tl;
     PhonesFragment phones_fragment;
@@ -45,7 +47,7 @@ public class ContactInfoFragment extends Fragment {
     public static ContactInfoFragment newInstance(Contact c) {
 
         Bundle args = new Bundle();
-        args.putSerializable("Contact",c);
+        args.putSerializable("Contact", c);
         ContactInfoFragment fragment = new ContactInfoFragment();
         fragment.setArguments(args);
         return fragment;
@@ -55,18 +57,19 @@ public class ContactInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.contact_info_dialog,container,false);
+        v = inflater.inflate(R.layout.contact_info_dialog, container, false);
 //        setContentView(R.layout.contact_info_dialog);
-        c = (Contact)getArguments().getSerializable("Contact");
+        c = (Contact) getArguments().getSerializable("Contact");
         image = v.findViewById(R.id.picture_imageview);
         tl = v.findViewById(R.id.info_tabs);
         rv = v.findViewById(R.id.info_recycler);
         rv.setNestedScrollingEnabled(false);
         rv.setHasFixedSize(true);
-        edit= v.findViewById(R.id.button_edit_contact);
+        edit = v.findViewById(R.id.button_edit_contact);
         delete = v.findViewById(R.id.button_remove_contact);
         setInfo();
 
@@ -97,18 +100,20 @@ public class ContactInfoFragment extends Fragment {
         tl.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()){
+                switch (tab.getPosition()) {
                     case 0:
-                        if(phones_fragment==null)phones_fragment = new PhonesFragment().newInstance(c);
-                        FragmentTransaction transaction = getFragmentManager() .beginTransaction();
-                        transaction.replace(R.id.frame_info,phones_fragment);
+                        if (phones_fragment == null)
+                            phones_fragment = new PhonesFragment().newInstance(c);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame_info, phones_fragment);
                         //transaction.addToBackStack(null);
                         transaction.commit();
                         break;
                     case 1:
-                        if(mails_fragment==null)mails_fragment = new EmailFragment().newInstance(c);
+                        if (mails_fragment == null)
+                            mails_fragment = new EmailFragment().newInstance(c);
                         FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
-                        transaction1.replace(R.id.frame_info,mails_fragment);
+                        transaction1.replace(R.id.frame_info, mails_fragment);
                         //transaction1.addToBackStack(null);
                         transaction1.commit();
                         break;
@@ -117,7 +122,6 @@ public class ContactInfoFragment extends Fragment {
                 }
 
             }
-
 
 
             @Override
@@ -144,11 +148,10 @@ public class ContactInfoFragment extends Fragment {
 //            }
 //
 //        }
-        if(c.getPicture()!=null){
-            if(c.getPicture().contains("com.android.contacts")){
+        if (c.getPicture() != null) {
+            if (c.getPicture().contains("com.android.contacts")) {
                 image.setImageURI(Uri.parse(c.getPicture()));
-            }
-            else {
+            } else {
 
 
                 Uri uri = Uri.parse(c.getPicture());
@@ -159,7 +162,7 @@ public class ContactInfoFragment extends Fragment {
 
         phones_fragment = new PhonesFragment().newInstance(c);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.frame_info,phones_fragment);
+        transaction.add(R.id.frame_info, phones_fragment);
         transaction.commit();
 
         delete.setOnClickListener(new View.OnClickListener() {
@@ -183,33 +186,39 @@ public class ContactInfoFragment extends Fragment {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MainActivity ma = (MainActivity) getActivity();
+                Intent intent = new Intent(getContext(), EditContact.class);
+                intent.putExtra("Contact", c);
+                intent.putExtra("index", ma.getContactlist().indexOf(c));
+                ma.startActivityForResult(intent, EDIT_CONTACT_RESULT_FRAGMENT);
             }
         });
-        return  v;
+        return v;
     }
 
 
-
-    public void setInfo(){
-        HashMap<Integer,Pair> m1 = new HashMap();
-        int i=0;
-        if(c.getName().size()>0) {
+    public void setInfo() {
+        HashMap<Integer, Pair> m1 = new HashMap();
+        int i = 0;
+        if (c.getName().size() > 0) {
             m1.put(i++, new Pair(R.string.info_name, c.getName().get(1)));
             if (c.getName().get(2) != null)
                 m1.put(i++, new Pair(R.string.last_name, c.getName().get(2)));
         }
-        if(c.getAddress()!=null) {
+        if (c.getAddress() != null) {
             m1.put(i++, new Pair(R.string.info_address, c.getAddress()));
         }
-       // Log.d("CUMPLE",c.getBirth().toString());
-        if(c.getBirth()!=null) {
+        // Log.d("CUMPLE",c.getBirth().toString());
+        if (c.getBirth() != null) {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             m1.put(i++, new Pair(R.string.info_birthday, format.format(c.getBirth())));
         }
         InfoAdapter infoAdapter = new InfoAdapter(m1);
 
-   rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(infoAdapter);
     }
+
+
+
 }

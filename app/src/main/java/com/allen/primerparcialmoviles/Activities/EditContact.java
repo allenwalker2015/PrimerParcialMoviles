@@ -45,6 +45,7 @@ public class EditContact extends AppCompatActivity {
     EditText given_name, family_name, direction, birthday, new_mail, new_phone;
     com.mikhaellopez.circularimageview.CircularImageView image;
     //ImageView image;
+    int index;
     Button add_button, add_email_button;
     Spinner type;
     FloatingActionButton fab;
@@ -82,6 +83,9 @@ public class EditContact extends AppCompatActivity {
         if(getIntent().getSerializableExtra("Contact")!=null){
             c = (Contact)getIntent().getSerializableExtra("Contact");
             setInfo();
+        }
+        if(getIntent().getIntExtra("index",-1)>-1){
+           index = getIntent().getIntExtra("index",-1);
         }
         else c= new Contact();
 
@@ -188,6 +192,7 @@ public class EditContact extends AppCompatActivity {
                 ArrayList<ArrayList<String>> l = pa.getList();
                 c.setNumber(l);
                 returnIntent.putExtra("new_contact", c);
+                returnIntent.putExtra("index", index);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }

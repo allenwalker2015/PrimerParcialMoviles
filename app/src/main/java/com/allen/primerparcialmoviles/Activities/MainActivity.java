@@ -1,6 +1,7 @@
 package com.allen.primerparcialmoviles.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
@@ -36,7 +37,7 @@ public class MainActivity extends RuntimePermission {
     static final int NEW_CONTACT_REQUEST = 1;
     private static final int REQUEST_PERMISSION = 10;
 
-    final int REMOVE_CONTACT_RESULT = 31, CONTACT_INFO_RESULT=32,EDIT_CONTACT_RESULT=30;
+    final int REMOVE_CONTACT_RESULT = 31, CONTACT_INFO_RESULT=32,EDIT_CONTACT_RESULT=30,EDIT_CONTACT_RESULT_FRAGMENT=41;
     RecyclerView rv;
     GridLayoutManager gl;
     public ContactAdapter ca;
@@ -325,9 +326,61 @@ public class MainActivity extends RuntimePermission {
             if(resultCode == EDIT_CONTACT_RESULT){
                 Contact c = (Contact)data.getSerializableExtra("edited_contact");
                 int index = data.getIntExtra("index",-1);
-                contactlist.set(index,c);
-                ca.notifyItemChanged(index);
+
+                if(navigation.getSelectedItemId() == R.id.navigation_favorites) {
+
+                    int index2 = fca.list.indexOf(contactlist.get(index));
+                    contactlist.set(index, c);
+                    fca.list.set(index2,c);
+                    fca.notifyItemChanged(index2);
+
+                }else {
+
+
+                    contactlist.set(index, c);
+                    ca.notifyItemChanged(index);
+                }
+            }
+
+
+
+            }
+
+        if(requestCode==EDIT_CONTACT_RESULT_FRAGMENT){
+            if (resultCode == Activity.RESULT_OK) {
+
+                Contact c = (Contact)data.getSerializableExtra("new_contact");
+                int index = data.getIntExtra("index",-1);
+
+                if(navigation.getSelectedItemId() == R.id.navigation_favorites) {
+
+                    int index2 = fca.list.indexOf(contactlist.get(index));
+                    contactlist.set(index, c);
+                    fca.list.set(index2,c);
+                    fca.notifyItemChanged(index2);
+
+                }else {
+                    contactlist.set(index, c);
+                    ca.notifyItemChanged(index);
+                }
+
             }
         }
+    }
+
+    public BottomNavigationView getNavigation() {
+        return navigation;
+    }
+
+    public void setNavigation(BottomNavigationView navigation) {
+        this.navigation = navigation;
+    }
+
+    public ArrayList<Contact> getContactlist() {
+        return contactlist;
+    }
+
+    public void setContactlist(ArrayList<Contact> contactlist) {
+        this.contactlist = contactlist;
     }
 }

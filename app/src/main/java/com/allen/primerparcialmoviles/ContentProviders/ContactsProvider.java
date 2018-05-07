@@ -48,7 +48,7 @@ public class ContactsProvider {
             emails = getEmails(id);
             ArrayList<String> names = getNames(id);
             if(names.size()==0){
-                if(numbers.size()>0) {
+                if(numbers.get(0).size()>0) {
                     String num = numbers.get(0).get(0);
                     names.add(num);
                 }else
