@@ -182,6 +182,8 @@ public class EditContact extends AppCompatActivity {
                 c.setAddress(address);
                 //Contact c = new Contact(id, name, pa.getList(), ma.getList(), address, picture, favorite, new Date());
                 Intent returnIntent = new Intent();
+                LinkedHashMap<String,String> l = pa.getList();
+                c.setNumber(l);
                 returnIntent.putExtra("new_contact", c);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
@@ -289,6 +291,14 @@ public class EditContact extends AppCompatActivity {
         if(c.getBirth()!=null){
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             birthday.setText(format.format(c.getBirth()));
+        }
+        if (c.getPicture() != null) {
+            if (c.getPicture().contains("com.android.contacts")) {
+                image.setImageURI(Uri.parse(c.getPicture()));
+            } else {
+                Uri uri = Uri.parse(c.getPicture());
+                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, uri))).apply(RequestOptions.overrideOf(150, 150)).into(image);
+            }
         }
 
     }

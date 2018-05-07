@@ -80,7 +80,6 @@ public class ContactInfo extends AppCompatActivity {
                 Toast.makeText(ContactInfo.this, "HAS HECHO CLICK", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getBaseContext(),EditContact.class);
                 intent.putExtra("Contact", c);
-                intent.putExtra("Edit", true);
                 startActivityForResult(intent,EDIT_CONTACT_RESULT);
             }
         });
@@ -121,6 +120,36 @@ public class ContactInfo extends AppCompatActivity {
 
             }
         });
+
+        phones_fragment = new PhonesFragment().newInstance(c);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_info,phones_fragment);
+        transaction.commit();
+    }
+
+
+
+    public void setInfo(){
+        HashMap<Integer,Pair> m1 = new HashMap();
+        int i=0;
+        if(c.getName().size()>0) {
+            m1.put(i++, new Pair(R.string.info_name, c.getName().get(1)));
+            if (c.getName().get(2) != null)
+                m1.put(i++, new Pair(R.string.last_name, c.getName().get(2)));
+        }
+        if(c.getAddress()!=null) {
+            m1.put(i++, new Pair(R.string.info_address, c.getAddress()));
+        }
+       // Log.d("CUMPLE",c.getBirth().toString());
+        if(c.getBirth()!=null) {
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            m1.put(i++, new Pair(R.string.info_birthday, format.format(c.getBirth())));
+        }
+        InfoAdapter infoAdapter = new InfoAdapter(m1);
+
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(infoAdapter);
+
         cl = findViewById(R.id.toolbar);
         if(cl!=null) {
             if (c.getName().size() > 0) {
@@ -149,48 +178,20 @@ public class ContactInfo extends AppCompatActivity {
             }
         }
 
-        phones_fragment = new PhonesFragment().newInstance(c);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.frame_info,phones_fragment);
-        transaction.commit();
 
-        //name.setText(c.getName());
-//        RecyclerView rv = findViewById(R.id.phones_recycler);
-//        LinearLayoutManager lm = new LinearLayoutManager(getBaseContext());
-//        rv.setLayoutManager(lm);
-//        Log.d("NUMERO_EN_INFO", "onCreate: "+c.getNumber().size());
-//        PhoneAdapter pa = new PhoneAdapter(this,c.getNumber());
-//        Log.d("LISTA_EN_INFO", "onCreate: "+pa.getItemCount());
-//        rv.setAdapter(pa);
-       // overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.slide_in_left);
-    }
-
-
-
-    public void setInfo(){
-        HashMap<Integer,Pair> m1 = new HashMap();
-        int i=0;
-        if(c.getName().size()>0) {
-            m1.put(i++, new Pair(R.string.info_name, c.getName().get(1)));
-            if (c.getName().get(2) != null)
-                m1.put(i++, new Pair(R.string.last_name, c.getName().get(2)));
-        }
-        if(c.getAddress()!=null) {
-            m1.put(i++, new Pair(R.string.info_address, c.getAddress()));
-        }
-       // Log.d("CUMPLE",c.getBirth().toString());
-        if(c.getBirth()!=null) {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            m1.put(i++, new Pair(R.string.info_birthday, format.format(c.getBirth())));
-        }
-        InfoAdapter infoAdapter = new InfoAdapter(m1);
-
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(infoAdapter);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_CONTACT_RESULT) {
+
+            if (resultCode == RESULT_OK) {
+                c = (Contact)data.getSerializableExtra("new_contact");
+                setInfo();
+                phones_fragment = new PhonesFragment().newInstance(c);
+            }
+
+        }
+
     }
 }
