@@ -1,6 +1,8 @@
 package com.allen.primerparcialmoviles.Activities;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -10,10 +12,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.allen.primerparcialmoviles.Adapter.InfoAdapter;
 import com.allen.primerparcialmoviles.Data.Contact;
@@ -33,49 +39,51 @@ import java.util.Map;
 
 public class ContactInfo extends AppCompatActivity {
     ImageView image;
-
     RecyclerView rv;
+    int index;
     android.support.v7.widget.Toolbar cl;
     android.support.design.widget.TabLayout tl;
+    ImageButton edit,delete;
     PhonesFragment phones_fragment;
     EmailFragment mails_fragment;
     Contact c;
-
+    final int EDIT_CONTACT_RESULT=30;
+    final int REMOVE_CONTACT_RESULT = 31;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contact_info_dialog);
         c = (Contact)getIntent().getSerializableExtra("Contact");
+        index = getIntent().getIntExtra("index",0);
         image = findViewById(R.id.picture_imageview);
+        image.setOnClickListener(null);
         tl = findViewById(R.id.info_tabs);
         rv = findViewById(R.id.info_recycler);
         rv.setNestedScrollingEnabled(false);
         rv.setHasFixedSize(true);
+        edit= findViewById(R.id.button_edit_contact);
+        delete = findViewById(R.id.button_remove_contact);
         setInfo();
 
-//        lv = findViewById(R.id.basic_info);
-//
-//
-//        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-//
-//            Map<String, String> datum = new HashMap<String, String>(2);
-//            datum.put("title", "Nombre" );
-//            datum.put("subtitle",c.getName());
-//            data.add(datum);
-//            if(c.getBirth()!=null) {
-//                Map<String, String> datum2 = new HashMap<String, String>(2);
-//                datum2.put("title", "Cumpleaños");
-//                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-//                datum2.put("subtitle", format.format(c.getBirth()));
-//                data.add(datum2);
-//            }
-//
-//        SimpleAdapter adapter = new SimpleAdapter(this, data,
-//                android.R.layout.simple_list_item_2,
-//                new String[] {"title", "subtitle"},
-//                new int[] {android.R.id.text1,
-//                        android.R.id.text2});
-//        lv.setAdapter(adapter);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("delete_contact_index", index);
+                setResult(REMOVE_CONTACT_RESULT, returnIntent);
+                finish();
+            }
+        });
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ContactInfo.this, "HAS HECHO CLICK", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(),EditContact.class);
+                intent.putExtra("Contact", c);
+                intent.putExtra("Edit", true);
+                startActivityForResult(intent,EDIT_CONTACT_RESULT);
+            }
+        });
 
         tl.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -179,5 +187,10 @@ public class ContactInfo extends AppCompatActivity {
 
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(infoAdapter);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -35,10 +35,12 @@ import java.util.ArrayList;
 public class MainActivity extends RuntimePermission {
     static final int NEW_CONTACT_REQUEST = 1;
     private static final int REQUEST_PERMISSION = 10;
+    final int REMOVE_CONTACT_RESULT = 31, CONTACT_INFO_RESULT=32;
     RecyclerView rv;
     GridLayoutManager gl;
     public ContactAdapter ca;
     public ContactAdapter fca;
+    BottomNavigationView navigation;
     SearchView sv;
     ContactInfoFragment cif;
     ContactsProvider cp;
@@ -90,7 +92,7 @@ public class MainActivity extends RuntimePermission {
         LinearLayoutManager.SavedState mListState = savedInstanceState.getParcelable("RV");
         // Se obtienen los items de la lista
         contactlist = (ArrayList<Contact>) savedInstanceState.getSerializable("contact_list");
-        BottomNavigationView navigation =  findViewById(R.id.navigation);
+        navigation =  findViewById(R.id.navigation);
         // Restoring adapter items
 
         confSearch();
@@ -149,7 +151,8 @@ public class MainActivity extends RuntimePermission {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             Intent intent = new Intent(getBaseContext(), ContactInfo.class);
             intent.putExtra("Contact", c);
-            startActivity(intent);
+            intent.putExtra("index",contactlist.indexOf(c));
+            startActivityForResult(intent,CONTACT_INFO_RESULT);
         }
     }
 
@@ -160,7 +163,7 @@ public class MainActivity extends RuntimePermission {
         cp = new ContactsProvider(this);
         contactlist = cp.findContacts();
         rv = findViewById(R.id.list_container);
-        BottomNavigationView navigation =  findViewById(R.id.navigation);
+        navigation =  findViewById(R.id.navigation);
         ca = new ContactAdapter(contactlist, MainActivity.this) {
             @Override
             public void infoOnClickListener(Contact c) {
@@ -296,6 +299,27 @@ public class MainActivity extends RuntimePermission {
                 ca.notifyItemInserted(contactlist.size());
                 //ca.notifyDataSetChanged();
                 //fca.notifyDataSetChanged();
+            }
+
+        }
+
+        if(requestCode == CONTACT_INFO_RESULT){
+            if(resultCode == REMOVE_CONTACT_RESULT){
+
+                int index = data.getIntExtra("delete_contact_index",0);
+                if(navigation.getSelectedItemId() == R.id.navigation_favorites) {
+                    Contact c = contactlist.get(index);
+                    index = fca.list.indexOf(c);
+                    fca.list.remove(c);
+                    fca.notifyItemRemoved(index);
+                    fca.notifyDataSetChanged();
+                }else{
+                    contactlist.remove(index);
+                    ca.notifyItemRemoved(index);
+                    ca.notifyDataSetChanged();
+                }
+
+
             }
         }
     }

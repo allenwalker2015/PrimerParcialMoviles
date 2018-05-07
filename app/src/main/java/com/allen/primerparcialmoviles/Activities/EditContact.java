@@ -281,7 +281,7 @@ public class EditContact extends AppCompatActivity {
             given_name.setText(c.getName().get(1));
         }
         if(c.getName().size()>2) {
-            given_name.setText(c.getName().get(2));
+            family_name.setText(c.getName().get(2));
         }
         if(c.getAddress()!=null){
             direction.setText(c.getAddress());
