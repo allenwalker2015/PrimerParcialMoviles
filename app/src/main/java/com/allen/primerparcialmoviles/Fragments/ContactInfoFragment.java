@@ -170,14 +170,19 @@ public class ContactInfoFragment extends Fragment {
             public void onClick(View v) {
                 MainActivity ma = (MainActivity) getActivity();
 
-                int index = ma.ca.list.indexOf(c);
-                ma.ca.list.remove(c);
-                int index2 = ma.fca.list.indexOf(c);
-                ma.fca.list.remove(c);
-                ma.fca.notifyItemRemoved(index2);
-                ma.fca.notifyDataSetChanged();
-                ma.ca.notifyItemRemoved(index);
-                ma.ca.notifyDataSetChanged();
+
+                if(ma.fca!=null) {
+                    int index2 = ma.fca.list.indexOf(c);
+                    ma.fca.list.remove(c);
+                    ma.fca.notifyItemRemoved(index2);
+                    ma.fca.notifyDataSetChanged();
+                }
+                if(ma.ca!=null) {
+                    int index = ma.ca.list.indexOf(c);
+                    ma.ca.list.remove(c);
+                    ma.ca.notifyItemRemoved(index);
+                    ma.ca.notifyDataSetChanged();
+                }
                 getActivity().getSupportFragmentManager().beginTransaction().remove(ContactInfoFragment.this).commit();
 
             }
