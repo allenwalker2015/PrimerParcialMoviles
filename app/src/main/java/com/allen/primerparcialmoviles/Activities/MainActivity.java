@@ -312,14 +312,26 @@ public class MainActivity extends RuntimePermission {
                 int index = data.getIntExtra("delete_contact_index", 0);
                 if (navigation.getSelectedItemId() == R.id.navigation_favorites) {
                     Contact c = contactlist.get(index);
-                    index = fca.list.indexOf(c);
+                    int index2 = fca.list.indexOf(c);
                     fca.list.remove(c);
-                    fca.notifyItemRemoved(index);
+                    fca.filterList.remove(c);
+                    contactlist.remove(index);
+                    fca.notifyItemRemoved(index2);
                     fca.notifyDataSetChanged();
+                    if(sv!=null ) {
+                        if(sv.getQuery() != null)
+                        fca.getFilter().filter(sv.getQuery());
+                        fca.notifyDataSetChanged();
+                    }
                 } else {
                     contactlist.remove(index);
                     ca.notifyItemRemoved(index);
                     ca.notifyDataSetChanged();
+                    if(sv!=null ) {
+                        if(sv.getQuery() != null)
+                            ca.getFilter().filter(sv.getQuery());
+                        ca.notifyDataSetChanged();
+                    }
                 }
 
 
