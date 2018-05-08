@@ -3,6 +3,7 @@ package com.allen.primerparcialmoviles.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentTransaction;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -211,6 +212,26 @@ public class ContactInfo extends AppCompatActivity {
             transaction.replace(R.id.frame_info,phones_fragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putSerializable("contact", c);
+        savedInstanceState.putInt("index",index);
+        savedInstanceState.putBoolean("change_fragment",change_fragment);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        c= (Contact) savedInstanceState.getSerializable("contact");
+        change_fragment = savedInstanceState.getBoolean("change_fragment");
+        index =  savedInstanceState.getInt("index",-1);
+        setInfo();
+        setTitle();
+        super.onRestoreInstanceState(savedInstanceState);
+
+
     }
 
     @Override
