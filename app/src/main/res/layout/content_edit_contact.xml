@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/contact_picture"
             android:layout_alignEnd="@+id/contact_picture"
-            android:src="@android:drawable/ic_menu_camera" />
+            android:src="@android:drawable/ic_menu_camera"
+            android:layout_alignRight="@+id/contact_picture" />
         <!--<ImageView-->
         <!--android:id="@+id/contact_picture"-->
         <!--android:layout_width="150dp"-->

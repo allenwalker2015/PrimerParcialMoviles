@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +43,9 @@ import java.util.LinkedHashMap;
 
 public class EditContact extends AppCompatActivity {
     public static final int PICK_IMAGE = 1;
+    public static final int TAKE_IMAGE = 2;
 
+    Uri photoURI;
     //Elementos de la view
     EditText given_name, family_name, direction, birthday, new_mail, new_phone;
     com.mikhaellopez.circularimageview.CircularImageView image;
@@ -268,8 +273,28 @@ public class EditContact extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (items[item].equals("Take Photo")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, PICK_IMAGE);
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    // Ensure that there's a camera activity to handle the intent
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile();
+                        } catch (IOException ex) {
+                            // Error occurred while creating the File...
+                        }
+                        // Continue only if the File was successfully created
+                        if (photoFile != null) {
+                            photoURI = Uri.fromFile(photoFile);
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            startActivityForResult(takePictureIntent, TAKE_IMAGE);
+                        }
+
+                    }
+
+
+
                 } else if (items[item].equals("Choose from Library")) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
@@ -315,12 +340,41 @@ public class EditContact extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             Uri selectedImageURI = data.getData();
-            c.setPicture(selectedImageURI.toString());
+            if(selectedImageURI!=null) {
+                c.setPicture(selectedImageURI.toString());
 
-            Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, selectedImageURI))).apply(RequestOptions.overrideOf(150, 150)).into(image);
-            image.setImageURI(selectedImageURI);
-            Toast.makeText(this, "URI:" + selectedImageURI.toString(), Toast.LENGTH_SHORT).show();
+                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, selectedImageURI))).apply(RequestOptions.overrideOf(150, 150)).into(image);
+                image.setImageURI(selectedImageURI);
+                Toast.makeText(this, "URI:" + selectedImageURI.toString(), Toast.LENGTH_SHORT).show();
+            }
         }
+        if (requestCode == TAKE_IMAGE && resultCode == RESULT_OK) {
+            if (photoURI != null) {
+                c.setPicture(photoURI.toString());
+
+                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, photoURI))).apply(RequestOptions.overrideOf(150, 150)).into(image);
+                image.setImageURI(photoURI);
+                Toast.makeText(this, "URI:" + photoURI.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
+    }
+
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for use with ACTION_VIEW intents
+        return image;
     }
 
 
