@@ -37,7 +37,7 @@ public class ContactInfoFragment extends Fragment {
     ImageView image;
     View v;
     RecyclerView rv;
-    ImageButton edit, delete;
+    ImageButton edit, delete,share;
     android.support.v7.widget.Toolbar cl;
     TabLayout tl;
     PhonesFragment phones_fragment;
@@ -71,6 +71,8 @@ public class ContactInfoFragment extends Fragment {
         rv.setHasFixedSize(true);
         edit = v.findViewById(R.id.button_edit_contact);
         delete = v.findViewById(R.id.button_remove_contact);
+        share = v.findViewById(R.id.button_share_contact);
+
         setInfo();
 
 //        lv = findViewById(R.id.basic_info);
@@ -164,7 +166,25 @@ public class ContactInfoFragment extends Fragment {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.frame_info, phones_fragment);
         transaction.commit();
-
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Log.d("CONTACT_INFO:", );
+                Intent shareIntent;
+                shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if(c.getPicture()!=null) {
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(c.getPicture()));
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, getShareContactInfo(c));
+                    shareIntent.setType("image/png");
+                }
+                else{
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, getShareContactInfo(c));
+                    shareIntent.setType("text/plain");
+                }
+                startActivity(Intent.createChooser(shareIntent,"Share with"));
+            }
+        });
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,6 +244,33 @@ public class ContactInfoFragment extends Fragment {
         rv.setAdapter(infoAdapter);
     }
 
+    public static String getShareContactInfo(Contact c) {
+        String name = "", birth = "", emails = "", phones = "", address = "";
+        if (c.getName() != null && c.getName().size() > 0) {
+            name = "FULL NAME:\n" + c.getName().get(0) + "\n";
+        }
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        if (c.getBirth() != null) {
+            birth = "BIRTHDAY:\n" + format.format(c.getBirth()) + "\n";
+        }
+        if (c.getAddress() != null) {
+            address = "ADDRESS:\n" + c.getAddress() + "\n";
+        }
+        if (c.getEmails() != null && c.getEmails().size() > 0) {
+            emails = "EMAILS:\n";
+            for (String email : c.getEmails()) {
+                emails += email + "\n";
+            }
+        }
+
+        if (c.getNumber().get(0) != null && c.getNumber().get(0).size() > 0) {
+            phones = "PHONES:\n";
+            for (int i = 0; i < c.getNumber().get(0).size(); i++) {
+                phones += c.getNumber().get(1).get(i).toString() + ":" + c.getNumber().get(0).get(i).toString() + "\n";
+            }
+        }
+        return name+birth+address+emails+phones;
+    }
 
 
-}
+    }
