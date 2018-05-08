@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Contacts App</string>
+    <string name="title_home">Inicio</string>
+    <string name="title_favorites">Favoritos</string>
+    <string name="msg">Porfavor habilite los permisos para poder continuar</string>
+    <string name="info_name">Nombre</string>
+    <string name="info_birthday">Cumpleaños</string>
+    <string name="info_address">Direccion</string>
+    <string name="title_activity_edit_contact">Añadir Contacto</string>
+    <string name="createname">Nombre</string>
+    <string name="last_name">Apellido</string>
+    <string name="email">Correo</string>
+    <string name="address">Direccion</string>
+    <string name="id">Id</string>
+    <string name="phone">Telefonos</string>
+    <string name="add">Añadir</string>
+    <string name="birthday">Cumpleaños</string>
+    <string name="photo_picker_title">Añadir imagen!</string>
+    <string name="photo_picker_take_photo">Tomar foto</string>
+    <string name="photo_picker_gallery">Seleccionar de Galeria</string>
+    <string name="photo_picker_cancel">Cancelar</string>
+    <string name="enable_permissions">HABILITAR</string>
+    <string name="grant_permission">PERMITIR</string>
+</resources>

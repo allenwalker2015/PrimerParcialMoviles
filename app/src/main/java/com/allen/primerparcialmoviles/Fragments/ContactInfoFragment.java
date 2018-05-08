@@ -155,7 +155,7 @@ public class ContactInfoFragment extends Fragment {
 
 
                 Uri uri = Uri.parse(c.getPicture());
-                Glide.with(this).load(new File(URIPath.getRealPathFromURI(getContext(), uri))).
+                Glide.with(this).load( uri).
                         into(image);
             }
         }

@@ -272,7 +272,7 @@ public class EditContact extends AppCompatActivity {
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Take Photo")) {
+                if (items[item].equals(getString(R.string.photo_picker_take_photo))) {
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     // Ensure that there's a camera activity to handle the intent
                     if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -286,7 +286,8 @@ public class EditContact extends AppCompatActivity {
                         }
                         // Continue only if the File was successfully created
                         if (photoFile != null) {
-                            photoURI = Uri.fromFile(photoFile);
+                            photoURI = FileProvider.getUriForFile(EditContact.this,
+                                    "com.allen.primerparcialmoviles.provider",photoFile);
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                             startActivityForResult(takePictureIntent, TAKE_IMAGE);
                         }
@@ -295,7 +296,7 @@ public class EditContact extends AppCompatActivity {
 
 
 
-                } else if (items[item].equals("Choose from Library")) {
+                } else if (items[item].equals(getString(R.string.photo_picker_gallery))) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -303,7 +304,7 @@ public class EditContact extends AppCompatActivity {
                     startActivityForResult(
                             Intent.createChooser(intent, "Select File"),
                             PICK_IMAGE);
-                } else if (items[item].equals("Cancel")) {
+                } else if (items[item].equals(getString(R.string.photo_picker_cancel))) {
                     dialog.dismiss();
                 }
             }
@@ -330,7 +331,7 @@ public class EditContact extends AppCompatActivity {
                 image.setImageURI(Uri.parse(c.getPicture()));
             } else {
                 Uri uri = Uri.parse(c.getPicture());
-                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, uri))).apply(RequestOptions.overrideOf(150, 150)).into(image);
+                Glide.with(this).load( uri).apply(RequestOptions.overrideOf(150, 150)).into(image);
             }
         }
 
@@ -345,16 +346,16 @@ public class EditContact extends AppCompatActivity {
 
                 Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, selectedImageURI))).apply(RequestOptions.overrideOf(150, 150)).into(image);
                 image.setImageURI(selectedImageURI);
-                Toast.makeText(this, "URI:" + selectedImageURI.toString(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "URI:" + selectedImageURI.toString(), Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == TAKE_IMAGE && resultCode == RESULT_OK) {
             if (photoURI != null) {
                 c.setPicture(photoURI.toString());
 
-                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, photoURI))).apply(RequestOptions.overrideOf(150, 150)).into(image);
+                Glide.with(this).load(photoURI).apply(RequestOptions.overrideOf(150, 150)).into(image);
                 image.setImageURI(photoURI);
-                Toast.makeText(this, "URI:" + photoURI.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "URI:" + photoURI.toString(), Toast.LENGTH_SHORT).show();
 
             }
         }

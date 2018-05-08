@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.SparseIntArray;
 import android.view.View;
 
+import com.allen.primerparcialmoviles.R;
+
 /**
  * Created by NgocTri on 7/4/2016.
  */
@@ -38,7 +40,7 @@ public abstract class RuntimePermission extends AppCompatActivity {
 
         if (permissionCheck!=PackageManager.PERMISSION_GRANTED) {
             if(showRequestPermissions) {
-                Snackbar.make(findViewById(android.R.id.content), stringId, Snackbar.LENGTH_INDEFINITE).setAction("GRANT", new View.OnClickListener() {
+                Snackbar.make(findViewById(android.R.id.content), stringId, Snackbar.LENGTH_INDEFINITE).setAction(R.string.grant_permission, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ActivityCompat.requestPermissions(RuntimePermission.this, requestedPermissions, requestCode);
@@ -65,7 +67,7 @@ public abstract class RuntimePermission extends AppCompatActivity {
         } else {
             //Display message when contain some Dangerous permisson not accept
             Snackbar.make(findViewById(android.R.id.content), mErrorString.get(requestCode),
-                    Snackbar.LENGTH_INDEFINITE).setAction("ENABLE", new View.OnClickListener() {
+                    Snackbar.LENGTH_INDEFINITE).setAction(R.string.enable_permissions, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent();

@@ -73,7 +73,7 @@ public abstract class ContactAdapter extends RecyclerView.Adapter<ContactAdapter
             }
             else {
                 Uri uri = Uri.parse(list.get(position).getPicture());
-                Glide.with(context).load(new File(URIPath.getRealPathFromURI(context, uri))).
+                Glide.with(context).load( uri).
                         into(holder.picture);
             }
            // holder.picture.setImageURI(Uri.parse(list.get(position).getPicture()));

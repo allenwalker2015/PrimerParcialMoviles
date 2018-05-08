@@ -78,7 +78,7 @@ public class ContactInfo extends AppCompatActivity {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ContactInfo.this, "HAS HECHO CLICK", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(ContactInfo.this, "HAS HECHO CLICK", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getBaseContext(),EditContact.class);
                 intent.putExtra("Contact", c);
                 startActivityForResult(intent,EDIT_CONTACT_RESULT);
@@ -161,7 +161,7 @@ public class ContactInfo extends AppCompatActivity {
 
 
                 Uri uri = Uri.parse(c.getPicture());
-                Glide.with(this).load(new File(URIPath.getRealPathFromURI(this, uri))).
+                Glide.with(this).load( uri).
                         into(image);
             }
         }
