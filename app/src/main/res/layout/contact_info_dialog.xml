@@ -45,7 +45,7 @@
                     android:layout_gravity="right"
                     android:scaleType="fitCenter"
                     android:padding="8dp"
-                    android:layout_margin="16dp"
+                    android:layout_margin="8dp"
                     android:background="@drawable/round_button"
                     android:backgroundTint="#f44336"
                     android:src="@drawable/delete_white" />
@@ -61,8 +61,21 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:layout_gravity="right"
-                    android:layout_margin="16dp"
+                    android:layout_margin="8dp"
                     android:src="@drawable/edit_white" />
+
+                <ImageButton
+                    android:id="@+id/button_share_contact"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+
+                    android:layout_alignTop="@+id/button_remove_contact"
+                    android:layout_gravity="right"
+                    android:layout_toLeftOf="@id/button_remove_contact"
+                    android:background="@drawable/round_button_green2"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/share_white" />
             </RelativeLayout>
 
 

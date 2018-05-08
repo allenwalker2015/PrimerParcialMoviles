@@ -45,7 +45,7 @@ public class ContactInfo extends AppCompatActivity {
     private boolean change_fragment=false;
     android.support.v7.widget.Toolbar cl;
     android.support.design.widget.TabLayout tl;
-    ImageButton edit,delete;
+    ImageButton edit,delete,share;
     PhonesFragment phones_fragment;
     EmailFragment mails_fragment;
     Contact c;
@@ -65,6 +65,7 @@ public class ContactInfo extends AppCompatActivity {
         rv.setHasFixedSize(true);
         edit= findViewById(R.id.button_edit_contact);
         delete = findViewById(R.id.button_remove_contact);
+        share = findViewById(R.id.button_share_contact);
         setInfo();
 
         delete.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +84,26 @@ public class ContactInfo extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(),EditContact.class);
                 intent.putExtra("Contact", c);
                 startActivityForResult(intent,EDIT_CONTACT_RESULT);
+            }
+        });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // Log.d("CONTACT_INFO:", );
+                Intent shareIntent;
+                shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if(c.getPicture()!=null) {
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(c.getPicture()));
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, getShareContactInfo(c));
+                    shareIntent.setType("image/png");
+                }
+                else{
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, getShareContactInfo(c));
+                    shareIntent.setType("text/plain");
+                }
+                startActivity(Intent.createChooser(shareIntent,"Share with"));
             }
         });
 
@@ -229,7 +250,7 @@ public class ContactInfo extends AppCompatActivity {
         index =  savedInstanceState.getInt("index",-1);
         setInfo();
         setTitle();
-        super.onRestoreInstanceState(savedInstanceState);
+       // super.onRestoreInstanceState(savedInstanceState);
 
 
     }
@@ -246,5 +267,36 @@ public class ContactInfo extends AppCompatActivity {
             super.onBackPressed();
         }
 
+    }
+
+    public static String getShareContactInfo(Contact c){
+        String name="",birth="",emails="",phones="",address="";
+        if(c.getName()!=null && c.getName().size()>0){
+             name="FULL NAME:\n"+ c.getName().get(0)+"\n";
+        }
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        if(c.getBirth()!=null) {
+            birth="BIRTHDAY:\n"+ format.format(c.getBirth())+"\n";
+        }
+        if(c.getAddress()!=null){
+            address ="ADDRESS:\n"+c.getAddress()+"\n";
+        }
+        if(c.getEmails()!=null &&c.getEmails().size()>0) {
+             emails = "EMAILS:\n";
+            for (String email : c.getEmails()) {
+                emails+=email + "\n";
+            }
+        }
+
+        if(c.getNumber().get(0)!=null && c.getNumber().get(0).size()>0) {
+            phones = "PHONES:\n";
+            for(int i=0;i<c.getNumber().get(0).size();i++){
+                phones+= c.getNumber().get(1).get(i).toString()+":"+c.getNumber().get(0).get(i).toString()+"\n";
+            }
+        }
+
+
+
+       return name+birth+address+emails+phones;
     }
 }
